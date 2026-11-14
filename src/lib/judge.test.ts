@@ -1,16 +1,19 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { judgeDescent, verdictFromMargin } from './judge.ts'
+import { EMPTY_STAMPS, grantBadge, parseStamps, recordMountain } from './badges.ts'
 import { buildShareText } from './share.ts'
 import {
   formatClock,
   formatDuration,
   isNextDay,
   isPlausibleSunset,
+  joinClock,
   parseClock,
   parseOpenMeteoLocal,
   seoulDateKey,
   seoulMinutes,
+  splitClock,
   targetDateKey,
 } from './time.ts'
 
@@ -99,6 +102,45 @@ test('직접 입력한 일몰 시각은 16:00~21:00만 받는다', () => {
   assert.equal(isPlausibleSunset(17 * 60 + 20), true)
   assert.equal(isPlausibleSunset(21 * 60), true)
   assert.equal(isPlausibleSunset(21 * 60 + 1), false)
+})
+
+test('배지는 한 번만 받고, 처음 받은 날짜가 유지된다', () => {
+  const first = grantBadge(EMPTY_STAMPS, 'green-light', '2026-11-14')
+  assert.equal(first.earned['green-light'], '2026-11-14')
+  const again = grantBadge(first, 'green-light', '2026-11-20')
+  assert.equal(again, first)
+  assert.equal(again.earned['green-light'], '2026-11-14')
+})
+
+test('확인한 산은 중복 없이 기록한다', () => {
+  let state = recordMountain(EMPTY_STAMPS, 'bukhan')
+  state = recordMountain(state, 'bukhan')
+  state = recordMountain(state, 'inwang')
+  assert.deepEqual(state.mountains, ['bukhan', 'inwang'])
+})
+
+test('저장된 글자가 이상해도 안전하게 읽는다', () => {
+  assert.deepEqual(parseStamps(null), EMPTY_STAMPS)
+  assert.deepEqual(parseStamps('깨진 글자'), EMPTY_STAMPS)
+  const parsed = parseStamps(
+    JSON.stringify({ earned: { ready: '2026-11-14', hacked: 'x' }, mountains: ['bukhan', 'bukhan', 'everest'] }),
+  )
+  assert.deepEqual(parsed.earned, { ready: '2026-11-14' })
+  assert.deepEqual(parsed.mountains, ['bukhan'])
+})
+
+test('12시간제 변환: 오전 12시는 0시, 오후 12시는 12시', () => {
+  assert.deepEqual(splitClock(0), { meridiem: 'am', hour12: 12, minute: 0 })
+  assert.deepEqual(splitClock(12 * 60 + 45), { meridiem: 'pm', hour12: 12, minute: 45 })
+  assert.deepEqual(splitClock(15 * 60), { meridiem: 'pm', hour12: 3, minute: 0 })
+  assert.equal(joinClock('am', 12, 0), 0)
+  assert.equal(joinClock('pm', 12, 45), 12 * 60 + 45)
+  assert.equal(joinClock('pm', 3, 5), 15 * 60 + 5)
+  // 모든 분에서 되돌려도 같은 값이 나온다.
+  for (let minutes = 0; minutes < 1440; minutes++) {
+    const { meridiem, hour12, minute } = splitClock(minutes)
+    assert.equal(joinClock(meridiem, hour12, minute), minutes)
+  }
 })
 
 test('시각 파싱', () => {

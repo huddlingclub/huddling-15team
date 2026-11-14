@@ -69,6 +69,21 @@ export function formatClock(minutes: number): string {
   return `${hour}:${minute}`
 }
 
+export type Meridiem = 'am' | 'pm'
+
+/** 분(0~1439) → 오전/오후, 1~12시, 분. 12시간제로 보여 줄 때 쓴다. */
+export function splitClock(minutes: number): { meridiem: Meridiem; hour12: number; minute: number } {
+  const wrapped = ((minutes % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY
+  const hour24 = Math.floor(wrapped / 60)
+  return { meridiem: hour24 >= 12 ? 'pm' : 'am', hour12: hour24 % 12 || 12, minute: wrapped % 60 }
+}
+
+/** 오전/오후, 1~12시, 분 → 분(0~1439). 오전 12시는 0시, 오후 12시는 12시다. */
+export function joinClock(meridiem: Meridiem, hour12: number, minute: number): number {
+  const hour24 = (hour12 % 12) + (meridiem === 'pm' ? 12 : 0)
+  return hour24 * 60 + minute
+}
+
 /** 분 → "1시간 15분". 부호는 붙이지 않는다(절댓값). */
 export function formatDuration(minutes: number): string {
   const total = Math.abs(Math.round(minutes))
