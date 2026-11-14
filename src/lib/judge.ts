@@ -1,4 +1,5 @@
 import {
+  GAUGE_FULL_MARGIN_MIN,
   JUDGE_THRESHOLDS,
   REST_MIN,
   SAFE_FINISH_BEFORE_SUNSET_MIN,
@@ -41,4 +42,9 @@ export function judgeDescent(input: JudgeInput, thresholds: Thresholds = JUDGE_T
     marginMin,
     verdict: verdictFromMargin(marginMin, thresholds),
   }
+}
+
+/** '일몰까지 남은 시간' 막대 길이(0~100%). GAUGE_FULL_MARGIN_MIN 이상이면 가득, 일몰 뒤 하산이면 0. */
+export function marginPercent(marginMin: number): number {
+  return Math.min(100, Math.max(0, (marginMin / GAUGE_FULL_MARGIN_MIN) * 100))
 }

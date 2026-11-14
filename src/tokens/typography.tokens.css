@@ -3,6 +3,8 @@
 @theme {
   --font-pix-body: "Galmuri14", ui-monospace, monospace;
   --font-pix-display: "Galmuri11", "Galmuri14", ui-monospace, monospace;
+  /* 피그마 Timeline 카드처럼 픽셀 글꼴이 아닌 본문용 고딕 */
+  --font-pix-ui: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 
   --text-pix-caption: 0.6875rem;
   --text-pix-caption--line-height: 1.5;

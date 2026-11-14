@@ -1,95 +1,71 @@
-import type { Verdict } from '../config.ts'
-import type { PenguinMood } from '../content.ts'
-import { formatClock, isNextDay } from '../lib/time.ts'
-import { Penguin } from './Penguin.tsx'
+import type { CSSProperties } from 'react'
+import { GAUGE_FULL_MARGIN_MIN, type Verdict } from '../config.ts'
+import { marginPercent } from '../lib/judge.ts'
+import { formatClock } from '../lib/time.ts'
+import lavenderSkin from '../assets/sprites/ui-skin-lavender.png'
 
-const FILL: Record<Verdict, string> = {
-  green: 'bg-pix-green',
-  yellow: 'bg-pix-yellow',
-  red: 'bg-pix-red',
+/** 판정별 채움 색과 위쪽 하이라이트(피그마 S2-A/B/C · Animated gauge, Pixel bevel) */
+const FILL: Record<Verdict, { body: string; bevel: string }> = {
+  green: { body: 'bg-pix-gauge-green', bevel: 'bg-pix-gauge-green-bevel' },
+  yellow: { body: 'bg-pix-gauge-yellow', bevel: 'bg-pix-gauge-yellow-bevel' },
+  red: { body: 'bg-pix-gauge-red', bevel: 'bg-pix-gauge-red-bevel' },
+}
+
+/** 피그마 "원본 UI · lavender" 9-slice 스킨. 모서리 8px을 늘리지 않고 가운데만 채운다. */
+const SKIN: CSSProperties = {
+  borderStyle: 'solid',
+  borderWidth: 8,
+  borderImage: `url(${lavenderSkin}) 8 fill / 8px stretch`,
+}
+
+/** 25px 간격, 3px 폭의 흰 눈금으로 막대를 칸처럼 나눈다. */
+const TICKS: CSSProperties = {
+  backgroundImage: 'repeating-linear-gradient(to right, transparent 0 22px, var(--color-pix-gauge-tick) 22px 25px)',
 }
 
 interface Props {
-  nowMin: number
-  finishMin: number
+  /** 입산 시각(자정부터 분) */
+  departMin: number
   sunsetMin: number
+  /** 일몰 − 예상 하산(분). 음수면 일몰 뒤에 하산 */
+  marginMin: number
   verdict: Verdict
-  /** 막대 위를 걸어 내려오는 펭귄의 표정 */
-  mood: PenguinMood
+  className?: string
+  style?: CSSProperties
 }
 
-const clampPercent = (value: number) => Math.min(100, Math.max(0, value))
-
 /**
- * 지금 → (일몰 또는 예상 하산 중 늦은 쪽) 구간을 한 줄로 보여준다.
- * 색칠된 구간 = 산에서 보내는 시간, 노란 눈금 = 일몰, 일몰 뒤로 넘어간 구간은 어두운 색으로 표시.
- * 펭귄은 막대가 차오르는 속도에 맞춰 왼쪽에서 예상 하산 위치까지 걸어간다.
+ * 일몰까지 남은 시간 (피그마 디자인 시스템 · Timeline).
+ * 막대는 "하산 후 일몰까지 남는 여유"를 나타내서, 판정이 나쁠수록 짧아진다.
  */
-export function TimelineGauge({ nowMin, finishMin, sunsetMin, verdict, mood }: Props) {
-  const end = Math.max(sunsetMin, finishMin)
-  const span = Math.max(end - nowMin, 1)
-  const toPercent = (minutes: number) => clampPercent(((minutes - nowMin) / span) * 100)
-
-  const finishAt = toPercent(finishMin)
-  const sunsetAt = toPercent(sunsetMin)
-  const overflow = finishMin > sunsetMin
-
-  const safeWidth = overflow ? sunsetAt : finishAt
-  const overflowWidth = overflow ? finishAt - sunsetAt : 0
+export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, className = '', style }: Props) {
+  const percent = marginPercent(marginMin)
+  const margin = Math.max(0, Math.round(marginMin))
 
   return (
-    <div className="pt-12">
-      <div className="relative h-10 border-4 border-pix-ink bg-pix-lilac">
-        <div className="absolute inset-0 origin-left animate-pix-grow">
-          <div className={`absolute inset-y-0 left-0 ${FILL[verdict]}`} style={{ width: `${safeWidth}%` }} />
-          {overflow && (
-            <div
-              className="absolute inset-y-0 bg-pix-night"
-              style={{ left: `${sunsetAt}%`, width: `${overflowWidth}%` }}
-            />
-          )}
+    <section style={{ ...SKIN, ...style }} className={`flex flex-col gap-2 p-1 font-pix-ui ${className}`}>
+      <h2 className="text-xs leading-[1.35] font-bold text-pix-text-strong">일몰까지 남은 시간</h2>
+
+      <div
+        role="meter"
+        aria-label="하산 후 일몰까지 여유"
+        aria-valuemin={0}
+        aria-valuemax={GAUGE_FULL_MARGIN_MIN}
+        aria-valuenow={Math.min(margin, GAUGE_FULL_MARGIN_MIN)}
+        aria-valuetext={marginMin < 0 ? '일몰 뒤에 하산' : `여유 ${margin}분`}
+        className="relative h-3.5 w-full overflow-hidden rounded-[3px] border-2 border-pix-gauge-border bg-pix-gauge-track"
+      >
+        <div className="absolute inset-0 origin-left animate-pix-grow" style={{ width: `${percent}%` }}>
+          <div className={`absolute inset-0 ${FILL[verdict].body}`} />
+          <div className={`absolute inset-x-0 top-0 h-[3px] ${FILL[verdict].bevel}`} />
         </div>
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-0 -ml-1 w-1 bg-pix-sun outline-2 outline-pix-ink"
-          style={{ left: `${sunsetAt}%` }}
-        />
-        {/* 모션을 줄이는 설정에서는 애니메이션이 꺼져도 펭귄이 도착 지점에 서 있도록 left를 직접 지정한다. */}
-        <div className="absolute bottom-full animate-pix-walk" style={{ left: `${finishAt}%` }}>
-          <div className="-translate-x-1/2">
-            <Penguin mood={mood} size="xs" />
-          </div>
-        </div>
+        <div aria-hidden="true" className="absolute inset-0" style={TICKS} />
       </div>
 
-      {overflow && <p className="mt-2 text-pix-body">어두운 구간은 일몰 이후예요.</p>}
-
-      <dl className="mt-3 grid grid-cols-3 gap-2 text-pix-body">
-        <div>
-          <dt className="flex items-center gap-1">
-            <span aria-hidden="true" className="size-3 border-2 border-pix-ink bg-pix-lilac" />
-            지금
-          </dt>
-          <dd className="font-pix-display text-pix-heading font-bold">{formatClock(nowMin)}</dd>
-        </div>
-        <div>
-          <dt className="flex items-center gap-1">
-            <span aria-hidden="true" className={`size-3 border-2 border-pix-ink ${FILL[verdict]}`} />
-            예상 하산
-          </dt>
-          <dd className="font-pix-display text-pix-heading font-bold">
-            {formatClock(finishMin)}
-            {isNextDay(finishMin) && <span className="block text-pix-caption">다음 날</span>}
-          </dd>
-        </div>
-        <div>
-          <dt className="flex items-center gap-1">
-            <span aria-hidden="true" className="size-3 border-2 border-pix-ink bg-pix-sun" />
-            일몰
-          </dt>
-          <dd className="font-pix-display text-pix-heading font-bold">{formatClock(sunsetMin)}</dd>
-        </div>
-      </dl>
-    </div>
+      <div className="flex items-start justify-between text-[10px] leading-[1.35]">
+        <p className="font-medium text-pix-text-muted">입산 {formatClock(departMin)}</p>
+        <p className="font-bold text-pix-text-strong">일몰 {formatClock(sunsetMin)}</p>
+      </div>
+    </section>
   )
 }

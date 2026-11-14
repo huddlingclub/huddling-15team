@@ -35,6 +35,19 @@
   --color-pix-red-dim: #6a1f2a;
   --color-pix-red-glow: #ff4b5c66;
 
+  /* 일몰까지 남은 시간 게이지 (피그마 디자인 시스템 · Timeline) */
+  --color-pix-gauge-track: #c7b8d6;
+  --color-pix-gauge-border: #694b82;
+  --color-pix-gauge-tick: #f4ecff;
+  --color-pix-gauge-green: #69bc70;
+  --color-pix-gauge-green-bevel: #a9eca2;
+  --color-pix-gauge-yellow: #e6b445;
+  --color-pix-gauge-yellow-bevel: #ffe89b;
+  --color-pix-gauge-red: #d95772;
+  --color-pix-gauge-red-bevel: #ff9ea6;
+  --color-pix-text-strong: #1a1233;
+  --color-pix-text-muted: #665780;
+
   /* 버튼 입체감 */
   --color-pix-bevel-light: #ffffff66;
   --color-pix-bevel-dark: #00000033;
