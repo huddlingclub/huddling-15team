@@ -1,5 +1,12 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 
+/** 닫힌 상태의 선택 카드 모양. 시간 선택창(PixelTimePicker)과 같은 모양을 쓰려고 내보낸다. */
+export const TRIGGER_BASE =
+  'block w-full cursor-pointer border-4 border-pix-ink px-3 py-2 text-left shadow-pix-sm focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange disabled:cursor-not-allowed disabled:bg-pix-paper-shade disabled:text-pix-ink-soft disabled:shadow-none'
+
+/** 열린 목록 상자. 선택 카드 바로 아래에 붙도록 -mt-1로 테두리를 살짝 겹친다. */
+export const PANEL_BASE = 'absolute inset-x-0 top-full z-20 -mt-1 border-4 border-pix-ink bg-pix-paper shadow-pix animate-pix-pop'
+
 export interface PixelOption {
   value: string
   label: string
@@ -100,9 +107,7 @@ export function PixelSelect({
         disabled={disabled}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={onKeyDown}
-        className={`block w-full cursor-pointer border-4 border-pix-ink px-3 py-2 text-left shadow-pix-sm transition-transform focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange disabled:cursor-not-allowed disabled:bg-pix-paper-shade disabled:text-pix-ink-soft disabled:shadow-none ${
-          open ? 'bg-pix-sun -translate-y-1' : 'bg-pix-paper'
-        }`}
+        className={`${TRIGGER_BASE} ${open ? 'bg-pix-sun' : 'bg-pix-paper'}`}
       >
         <span id={`${id}-label`} className="block text-pix-caption">
           {label}
@@ -125,7 +130,7 @@ export function PixelSelect({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute inset-x-0 top-full z-20 mt-2 border-4 border-pix-ink bg-pix-paper shadow-pix animate-pix-pop"
+          className={PANEL_BASE}
         >
           {options.map((option, index) => {
             const selected = index === selectedIndex

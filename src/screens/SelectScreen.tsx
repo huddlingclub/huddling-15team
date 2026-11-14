@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react'
 import mountainIconSrc from '../assets/sprites/icon-mountain.png'
 import { ChoiceCard } from '../components/ChoiceCard.tsx'
 import { MissionCard } from '../components/MissionCard.tsx'
 import { Penguin } from '../components/Penguin.tsx'
 import { PixelButton } from '../components/PixelButton.tsx'
 import { PixelSelect } from '../components/PixelSelect.tsx'
+import { PixelTimePicker } from '../components/PixelTimePicker.tsx'
 import { SpeechBubble } from '../components/SpeechBubble.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
 import { COURSES, MOUNTAINS, type CourseId, type DayOffset, type MountainId } from '../config.ts'
 import { SLOGAN } from '../content.ts'
 import { useScreenFocus } from '../hooks/useScreenFocus.ts'
-import { formatClock, formatDuration, parseClock } from '../lib/time.ts'
+import { formatDuration } from '../lib/time.ts'
 
 interface Props {
   mountainId: MountainId | null
@@ -32,20 +32,6 @@ const DAY_OPTIONS = [
   { value: 'today', label: '오늘' },
   { value: 'tomorrow', label: '내일' },
 ] as const
-
-const FIELD_CONTROL = 'mt-1 w-full min-h-11 bg-transparent font-pix-display text-pix-body font-bold outline-none'
-
-/** 라벨이 붙은 입력 칸. 칸 전체를 누르면 안쪽 입력이 선택된다. */
-function Field({ label, children, className = '' }: { label: string; children: ReactNode; className?: string }) {
-  return (
-    <label
-      className={`block border-4 border-pix-ink bg-pix-paper px-3 py-2 shadow-pix-sm focus-within:outline-4 focus-within:outline-offset-2 focus-within:outline-pix-orange ${className}`}
-    >
-      <span className="block text-pix-caption">{label}</span>
-      {children}
-    </label>
-  )
-}
 
 export function SelectScreen({
   mountainId,
@@ -113,14 +99,7 @@ export function SelectScreen({
         <PixelSelect label="날짜" value={day} options={DAY_OPTIONS} onChange={(value) => onDay(value as DayOffset)} />
       </div>
 
-      <Field label="입산 시간">
-        <input
-          type="time"
-          className={FIELD_CONTROL}
-          value={formatClock(departMin)}
-          onChange={(e) => onDepart(parseClock(e.target.value))}
-        />
-      </Field>
+      <PixelTimePicker label="입산 시간" value={departMin} onChange={onDepart} />
 
       <fieldset>
         <legend className="mb-3 border-4 border-pix-ink bg-pix-ink px-2 text-pix-paper">

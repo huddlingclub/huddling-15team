@@ -41,7 +41,7 @@ interface Props {
 
 export function SkyBackdrop({ mood }: Props) {
   return (
-    <div aria-hidden="true" className="fixed inset-0 -z-10 flex flex-col">
+    <div aria-hidden="true" className="fixed inset-0 -z-10 flex flex-col overflow-hidden">
       {BANDS[mood].map((band, index) => (
         <div key={index} className={`flex-1 transition-colors duration-700 ${band}`} />
       ))}
@@ -80,7 +80,9 @@ export function SkyBackdrop({ mood }: Props) {
         src={mountainSrc}
         alt=""
         draggable={false}
-        className={`pixelated absolute inset-x-0 bottom-0 w-full ${SPRITE_TONE[mood]}`}
+        // 1.5배로 키워 아래에 고정된 바텀시트 위로 봉우리가 올라오게 한다(가운데 기준으로 키워서 양옆은 잘린다).
+        // 너무 크게 키우면 그림의 픽셀이 거칠게 깨져 보여서 이 정도로 둔다.
+        className={`pixelated absolute inset-x-0 bottom-16 w-full origin-bottom scale-150 ${SPRITE_TONE[mood]}`}
       />
       <img
         src={forestSrc}

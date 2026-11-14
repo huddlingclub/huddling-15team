@@ -7,10 +7,12 @@ import {
   formatClock,
   formatDuration,
   isNextDay,
+  joinClock,
   parseClock,
   parseOpenMeteoLocal,
   seoulDateKey,
   seoulMinutes,
+  splitClock,
   targetDateKey,
 } from './time.ts'
 
@@ -103,6 +105,20 @@ test('저장된 글자가 이상해도 안전하게 읽는다', () => {
   )
   assert.deepEqual(parsed.earned, { ready: '2026-11-14' })
   assert.deepEqual(parsed.mountains, ['bukhan'])
+})
+
+test('12시간제 변환: 오전 12시는 0시, 오후 12시는 12시', () => {
+  assert.deepEqual(splitClock(0), { meridiem: 'am', hour12: 12, minute: 0 })
+  assert.deepEqual(splitClock(12 * 60 + 45), { meridiem: 'pm', hour12: 12, minute: 45 })
+  assert.deepEqual(splitClock(15 * 60), { meridiem: 'pm', hour12: 3, minute: 0 })
+  assert.equal(joinClock('am', 12, 0), 0)
+  assert.equal(joinClock('pm', 12, 45), 12 * 60 + 45)
+  assert.equal(joinClock('pm', 3, 5), 15 * 60 + 5)
+  // 모든 분에서 되돌려도 같은 값이 나온다.
+  for (let minutes = 0; minutes < 1440; minutes++) {
+    const { meridiem, hour12, minute } = splitClock(minutes)
+    assert.equal(joinClock(meridiem, hour12, minute), minutes)
+  }
 })
 
 test('시각 파싱', () => {
