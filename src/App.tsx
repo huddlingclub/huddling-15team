@@ -140,14 +140,14 @@ export default function App() {
     setPhase('stamps')
   }
 
-  const showResult = (day: DayOffset = dayOffset) => {
+  const showResult = (day: DayOffset = dayOffset, depart: number | null = departMin) => {
     const fallback = day === 'tomorrow' ? TOMORROW_DEFAULT_DEPART_MIN : seoulMinutes(new Date())
-    setCheckedAtMin(departMin ?? fallback)
+    setCheckedAtMin(depart ?? fallback)
     setRunKey((key) => key + 1)
     setPhase('result')
   }
 
-  const startCheck = async (day: DayOffset = dayOffset) => {
+  const startCheck = async (day: DayOffset = dayOffset, depart: number | null = departMin) => {
     if (!mountain || !courseId) return
 
     requestRef.current?.abort()
@@ -172,7 +172,7 @@ export default function App() {
       await minimumLoading
       if (controller.signal.aborted) return
       setSunsets((prev) => ({ ...prev, [key]: info }))
-      showResult(day)
+      showResult(day, depart)
     } catch {
       await minimumLoading
       if (controller.signal.aborted) return
@@ -197,8 +197,10 @@ export default function App() {
   /** 오늘은 늦었을 때: 내일 산행으로 바꿔 내일 일몰로 다시 계산한다. */
   const recalcTomorrow = () => {
     if (result?.verdict === 'red') grant(['wise-choice'])
+    // 오늘 늦은 시각을 그대로 내일에 쓰면 또 빨강이 나오므로, 직접 입력한 입산 시간은 비우고 내일 기본 시각으로 계산한다.
     setDayOffset('tomorrow')
-    void startCheck('tomorrow')
+    setDepartMin(null)
+    void startCheck('tomorrow', null)
   }
 
   const showingJudgement = (phase === 'result' || phase === 'guide') && mountain && courseId && sunset && result
