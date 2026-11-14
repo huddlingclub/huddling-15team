@@ -1,0 +1,62 @@
+/* 모든 움직임은 steps()로 끊어서 8비트 프레임 느낌을 낸다.
+   prefers-reduced-motion 처리는 index.css에서 일괄로 한다. */
+@theme {
+  --animate-pix-bob: pix-bob 1.6s steps(2) infinite;
+  --animate-pix-hop: pix-hop 0.7s steps(3) infinite;
+  --animate-pix-wobble: pix-wobble 0.5s steps(2) infinite;
+  --animate-pix-droop: pix-droop 2.4s steps(2) infinite;
+  --animate-pix-pop: pix-pop 0.4s steps(4) both;
+  --animate-pix-rise: pix-rise 0.5s steps(5) both;
+  --animate-pix-flash: pix-flash 0.3s steps(2) both;
+  --animate-pix-lamp-on: pix-lamp-on 0.4s steps(2) backwards;
+  --animate-pix-grow: pix-grow 1.2s steps(12) both;
+  --animate-pix-block: pix-block 1.2s steps(1) infinite;
+  --animate-pix-blink: pix-blink 1s steps(2) infinite;
+
+  @keyframes pix-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.25rem); }
+  }
+  @keyframes pix-hop {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.75rem); }
+  }
+  @keyframes pix-wobble {
+    0%, 100% { transform: translateX(-0.25rem); }
+    50% { transform: translateX(0.25rem); }
+  }
+  @keyframes pix-droop {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(0.25rem) rotate(3deg); }
+  }
+  @keyframes pix-pop {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pix-rise {
+    from { transform: translateY(1rem); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes pix-flash {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+  @keyframes pix-lamp-on {
+    0% { opacity: 0; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pix-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes pix-block {
+    0% { opacity: 0.25; }
+    50% { opacity: 1; }
+    100% { opacity: 0.25; }
+  }
+  @keyframes pix-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+}

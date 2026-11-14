@@ -1,0 +1,12 @@
+/* 번짐 없는 단단한 그림자 = 픽셀 느낌. */
+@theme {
+  --shadow-pix: 0.25rem 0.25rem 0 0 var(--color-pix-ink);
+  --shadow-pix-sm: 0.125rem 0.125rem 0 0 var(--color-pix-ink);
+  --shadow-pix-btn:
+    inset -0.25rem -0.25rem 0 0 var(--color-pix-bevel-dark),
+    inset 0.25rem 0.25rem 0 0 var(--color-pix-bevel-light),
+    0.25rem 0.25rem 0 0 var(--color-pix-ink);
+  --shadow-pix-glow-green: 0 0 0 0.25rem var(--color-pix-green-glow), 0 0 0 0.5rem var(--color-pix-green-glow);
+  --shadow-pix-glow-yellow: 0 0 0 0.25rem var(--color-pix-yellow-glow), 0 0 0 0.5rem var(--color-pix-yellow-glow);
+  --shadow-pix-glow-red: 0 0 0 0.25rem var(--color-pix-red-glow), 0 0 0 0.5rem var(--color-pix-red-glow);
+}

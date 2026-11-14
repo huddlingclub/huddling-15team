@@ -1,0 +1,17 @@
+/* 픽셀 폰트는 비트맵 격자의 정수배 크기에서만 또렷하다.
+   본문 Galmuri14(14의 배수), 제목·라벨 Galmuri11 Bold(11의 배수)로 크기를 맞춘다. */
+@theme {
+  --font-pix-body: "Galmuri14", ui-monospace, monospace;
+  --font-pix-display: "Galmuri11", "Galmuri14", ui-monospace, monospace;
+
+  --text-pix-caption: 0.6875rem;
+  --text-pix-caption--line-height: 1.5;
+  --text-pix-body: 0.875rem;
+  --text-pix-body--line-height: 1.6;
+  --text-pix-heading: 1.375rem;
+  --text-pix-heading--line-height: 1.4;
+  --text-pix-title: 2.0625rem;
+  --text-pix-title--line-height: 1.3;
+  --text-pix-hero: 2.75rem;
+  --text-pix-hero--line-height: 1.2;
+}

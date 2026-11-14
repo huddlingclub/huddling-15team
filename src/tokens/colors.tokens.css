@@ -1,0 +1,41 @@
+/* 펭산이 전용 팔레트 (SSOT). 8비트 노을 배경 + 펭귄 원본 색 + 신호등 3색.
+   컴포넌트는 이 값을 bg-pix-* / text-pix-* / border-pix-* 유틸리티로만 참조한다. */
+@theme {
+  /* 펭귄 원본 */
+  --color-pix-ink: #1b1b21;
+  --color-pix-ink-soft: #3d3d48;
+  --color-pix-scarf: #bfe0fb;
+  --color-pix-beak: #fbc02d;
+
+  /* 종이(카드) */
+  --color-pix-paper: #fff6e5;
+  --color-pix-paper-shade: #e9d6b4;
+
+  /* 하늘: 위 → 아래 */
+  --color-pix-night: #1c1744;
+  --color-pix-navy: #2c2a72;
+  --color-pix-indigo: #4b3a94;
+  --color-pix-purple: #7c58b8;
+  --color-pix-lilac: #a98bd8;
+  --color-pix-pink: #ff8fb4;
+  --color-pix-rose: #ffb8cb;
+  --color-pix-orange: #ff9a47;
+  --color-pix-orange-deep: #d9692a;
+  --color-pix-peach: #ffc78a;
+  --color-pix-sun: #ffe071;
+
+  /* 신호등 */
+  --color-pix-green: #4fe36b;
+  --color-pix-green-dim: #1f5a2e;
+  --color-pix-green-glow: #4fe36b66;
+  --color-pix-yellow: #ffd21f;
+  --color-pix-yellow-dim: #6b5a12;
+  --color-pix-yellow-glow: #ffd21f66;
+  --color-pix-red: #ff4b5c;
+  --color-pix-red-dim: #6a1f2a;
+  --color-pix-red-glow: #ff4b5c66;
+
+  /* 버튼 입체감 */
+  --color-pix-bevel-light: #ffffff66;
+  --color-pix-bevel-dark: #00000033;
+}
