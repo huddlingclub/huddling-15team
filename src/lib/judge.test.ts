@@ -179,9 +179,16 @@ test('여유가 줄수록 게이지가 짧아진다', () => {
   assert.equal(marginPercent(150), 100)
   assert.equal(marginPercent(120), 100)
   assert.equal(marginPercent(60), 50)
-  assert.equal(marginPercent(0), 0)
-  assert.equal(marginPercent(-30), 0)
   // 초록(60분 이상) > 노랑(20~59분) > 빨강(20분 미만)
   assert.ok(marginPercent(82) > marginPercent(40))
   assert.ok(marginPercent(40) > marginPercent(14))
+})
+
+test('빨간불이어도 여유가 있으면 게이지 한 칸은 보인다', () => {
+  assert.equal(marginPercent(1), 100 / 12)
+  assert.equal(marginPercent(10), 100 / 12)
+  assert.ok(marginPercent(19) > 100 / 12)
+  // 일몰 뒤 하산(여유 0분 이하)이면 비운다
+  assert.equal(marginPercent(0), 0)
+  assert.equal(marginPercent(-30), 0)
 })

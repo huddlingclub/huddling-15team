@@ -39,20 +39,20 @@ interface Props {
 }
 
 /**
- * 일몰까지 남은 시간 (피그마 디자인 시스템 · Timeline).
- * 막대는 "하산 후 일몰까지 남는 여유"를 나타내서, 판정이 나쁠수록 짧아진다.
+ * 일몰까지 남은 시간 (피그마 디자인 시스템 · S2 Timeline).
+ * 막대는 "하산 후 일몰까지 남는 여유"라서 판정이 나쁠수록 짧아지고, 펭귄이 채움 끝에 선다.
  */
 export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, mood, className = '', style }: Props) {
   const percent = marginPercent(marginMin)
-  const margin = Math.max(0, Math.round(marginMin))
+  const marginRounded = Math.max(0, Math.round(marginMin))
 
   return (
     <section style={{ ...SKIN, ...style }} className={`flex flex-col gap-2 p-1 font-pix-ui ${className}`}>
       <h2 className="text-xs leading-[1.35] font-bold text-pix-text-strong">일몰까지 남은 시간</h2>
 
       <div className="relative pt-12">
-        {/* 펭귄은 막대가 차오르는 속도에 맞춰 왼쪽에서 채움 끝까지 걷는다. 카드 밖으로 나가지 않게 양끝 28px 안쪽에 세운다.
-            모션을 줄이는 설정에서도 도착 지점에 서 있도록 left를 직접 지정한다. */}
+        {/* 펭귄은 막대가 차오르는 속도에 맞춰 채움 끝까지 걷는다.
+            카드 밖으로 나가지 않게 양끝 28px 안쪽에 세우고, 모션을 줄여도 도착 지점에 서 있도록 left를 직접 준다. */}
         <div
           aria-hidden="true"
           className="absolute top-0 animate-pix-walk"
@@ -68,8 +68,8 @@ export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, mood, 
           aria-label="하산 후 일몰까지 여유"
           aria-valuemin={0}
           aria-valuemax={GAUGE_FULL_MARGIN_MIN}
-          aria-valuenow={Math.min(margin, GAUGE_FULL_MARGIN_MIN)}
-          aria-valuetext={marginMin < 0 ? '일몰 뒤에 하산' : `여유 ${margin}분`}
+          aria-valuenow={Math.min(marginRounded, GAUGE_FULL_MARGIN_MIN)}
+          aria-valuetext={marginMin < 0 ? '일몰 뒤에 하산' : `여유 ${marginRounded}분`}
           className="relative h-3.5 w-full overflow-hidden rounded-[3px] border-2 border-pix-gauge-border bg-pix-gauge-track"
         >
           <div className="absolute inset-0 origin-left animate-pix-grow" style={{ width: `${percent}%` }}>
