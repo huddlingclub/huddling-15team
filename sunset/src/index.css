@@ -1,0 +1,487 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 산셋 SUNSET · 8bit pixel UI ===== */
+:root {
+  --line: #2a2350;
+  --cream: #fdf3dc;
+  --cream-shade: #ead2a2;
+  --lav: #dcd7ff;
+  --lav-shade: #aaa0ee;
+  --sunny: #ffd43b;
+  --sunny-shade: #e09a00;
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  background: #14122a;
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0.02em;
+}
+
+.app-shell {
+  background: linear-gradient(#1d1a3a 0, #1d1a3a 55%, #2a2358 100%);
+}
+@media (min-width: 640px) {
+  .app-shell {
+    box-shadow: 0 0 0 4px #3a3270, 0 0 0 8px #14122a, 0 0 0 11px #5a4fa0;
+  }
+}
+
+/* 픽셀 테두리: 모서리가 계단처럼 빠지는 box-shadow 외곽선 */
+.px-outline,
+.px-card,
+.px-card-lav,
+.px-banner,
+.px-btn,
+.px-select,
+.px-field,
+.scene-frame,
+.bubble,
+.toast,
+.px-back {
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line);
+}
+
+.px-card {
+  background: var(--cream);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -4px 0 0 var(--cream-shade),
+    inset -3px 0 0 0 #f3e2bb,
+    inset 0 3px 0 0 #fffaf0;
+}
+
+.px-card-lav {
+  background: #f1efff;
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -4px 0 0 #c9c3f2;
+}
+
+.px-banner {
+  background: #e7e3ff;
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -4px 0 0 #b9b0f2,
+    inset 0 3px 0 0 #ffffff;
+}
+
+.px-chip {
+  display: inline-block;
+  padding: 6px 8px 5px;
+  background: #241f47;
+  border: 2px solid currentColor;
+  box-shadow: 2px 2px 0 0 #0e0c1f;
+  line-height: 1;
+}
+
+.px-back {
+  background: #3d3577;
+  box-shadow:
+    0 -3px 0 0 #0e0c1f,
+    0 3px 0 0 #0e0c1f,
+    -3px 0 0 0 #0e0c1f,
+    3px 0 0 0 #0e0c1f,
+    inset 0 -3px 0 0 #2a2458;
+  transform: scale(0.82);
+}
+.px-back:active {
+  transform: scale(0.78) translateY(2px);
+}
+
+/* 버튼 */
+.px-btn {
+  position: relative;
+  transition: transform 80ms steps(2);
+  touch-action: manipulation;
+}
+.px-btn-yellow {
+  background: var(--sunny);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -5px 0 0 var(--sunny-shade),
+    inset 0 3px 0 0 #fff2a8;
+}
+.px-btn-lav {
+  background: var(--lav);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -5px 0 0 var(--lav-shade),
+    inset 0 3px 0 0 #f4f2ff;
+}
+.px-btn:not(:disabled):active {
+  transform: translateY(3px);
+}
+.px-btn:disabled {
+  background: #8c86ad;
+  color: #4e4873;
+  cursor: not-allowed;
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -5px 0 0 #6f6994;
+}
+
+/* 선택 카드 (산 / 코스) */
+.px-select {
+  background: var(--cream);
+  transition: transform 90ms steps(2), background 90ms steps(2);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -4px 0 0 var(--cream-shade);
+}
+.px-select:not(:disabled):active {
+  transform: translateY(2px);
+}
+.px-select.is-on {
+  background: var(--sunny);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -4px 0 0 var(--sunny-shade),
+    inset 0 3px 0 0 #fff2a8,
+    0 0 0 6px rgba(255, 212, 59, 0.25);
+  animation: select-pop 260ms steps(3);
+}
+.px-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.px-field {
+  background: var(--cream);
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 3px 0 0 #ead9b4;
+  min-height: 56px;
+}
+.px-field:focus-within {
+  outline: 3px solid var(--sunny);
+  outline-offset: 4px;
+}
+.px-select-native {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+}
+.px-select-native option {
+  color: #2a2350;
+  background: #fff;
+}
+.caret {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  font-size: 12px;
+  color: var(--line);
+  pointer-events: none;
+}
+input[type='time'] {
+  font-family: inherit;
+  color-scheme: light;
+}
+input[type='time']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+/* 체크박스 */
+.px-check {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #fff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  border: 3px solid var(--line);
+  box-shadow: inset -2px -2px 0 #d9d3bf;
+}
+.px-check.is-on {
+  background: #6b7a8f;
+  box-shadow: inset -2px -2px 0 #4c586a;
+  animation: select-pop 220ms steps(3);
+}
+
+/* 결과 장면 */
+.scene-frame {
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line);
+}
+.guide-scene {
+  background:
+    linear-gradient(
+      #6c5bb5 0 18%,
+      #9a63b3 18% 36%,
+      #cf78ac 36% 54%,
+      #ef94a3 54% 72%,
+      #f8b08f 72% 86%,
+      #4a3a8f 86% 100%
+    );
+}
+.bubble {
+  position: relative;
+  background: #fffaf0;
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -3px 0 0 #e9dcc0;
+  animation: bubble-in 380ms steps(4) 250ms both;
+}
+.bubble::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  bottom: 10px;
+  width: 9px;
+  height: 9px;
+  background: #fffaf0;
+  box-shadow:
+    -3px 0 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    0 -3px 0 0 var(--line);
+}
+
+/* 신호등 */
+.lamp-box {
+  background: #1f1b3d;
+  box-shadow:
+    0 -3px 0 0 var(--line),
+    0 3px 0 0 var(--line),
+    -3px 0 0 0 var(--line),
+    3px 0 0 0 var(--line),
+    inset 0 -3px 0 0 #0f0d22;
+}
+.lamp {
+  border-radius: 50%;
+  animation: lamp-glow 1.4s steps(2) infinite;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* 게이지 */
+.gauge-track {
+  background: #ffffff;
+  box-shadow:
+    0 -2px 0 0 var(--line),
+    0 2px 0 0 var(--line),
+    -2px 0 0 0 var(--line),
+    2px 0 0 0 var(--line);
+}
+.seg-on {
+  animation: seg-fill 220ms steps(2) both;
+}
+.seg-blink {
+  animation:
+    seg-fill 220ms steps(2) both,
+    blink 0.8s steps(1) 1.2s infinite;
+}
+
+.disclaimer {
+  border-top: 2px dashed #4a4180;
+  border-bottom: 2px dashed #4a4180;
+}
+
+.guide-link {
+  text-shadow: 2px 2px 0 #0e0c1f;
+}
+.guide-link:active {
+  transform: translateY(2px);
+}
+
+.toast {
+  background: #2a2350;
+  box-shadow:
+    0 -3px 0 0 var(--sunny),
+    0 3px 0 0 var(--sunny),
+    -3px 0 0 0 var(--sunny),
+    3px 0 0 0 var(--sunny);
+  animation: toast-in 240ms steps(3);
+}
+
+/* 로고 */
+.logo-small {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  background: #6d5bd0;
+  padding: 2px 8px;
+  box-shadow:
+    0 -2px 0 0 var(--line),
+    0 2px 0 0 var(--line),
+    -2px 0 0 0 var(--line),
+    2px 0 0 0 var(--line);
+}
+.logo-big {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--sunny);
+  -webkit-text-stroke: 6px #3b1f5e;
+  paint-order: stroke fill;
+  text-shadow:
+    0 4px 0 #e8590c,
+    0 7px 0 #3b1f5e;
+}
+
+/* ===== 애니메이션 ===== */
+.star {
+  animation: twinkle 2.4s steps(2) infinite;
+}
+.screen-enter {
+  animation: screen-in 280ms steps(4);
+}
+.verdict-pop {
+  animation: verdict-pop 520ms steps(6) both;
+}
+.bob {
+  animation: bob 1.2s steps(2) infinite;
+}
+.jump {
+  animation: jump 0.9s steps(3) infinite;
+}
+.tilt {
+  transform-origin: 50% 100%;
+  animation: tilt 1.6s steps(2) infinite;
+}
+.doze {
+  animation: doze 2.4s steps(2) infinite;
+}
+.mark {
+  animation: mark-float 1.4s steps(3) infinite;
+}
+.sparkle {
+  animation: twinkle 1.2s steps(2) infinite;
+}
+.walker {
+  animation: walk 2.6s steps(26) infinite alternate;
+}
+.loading-dots::after {
+  content: '';
+  animation: dots 1.2s steps(4) infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes verdict-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes select-pop {
+  0% { transform: scale(0.97); }
+  60% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes tilt {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(-3deg); }
+}
+@keyframes doze {
+  0%, 100% { transform: translateY(0) rotate(4deg); }
+  50% { transform: translateY(2px) rotate(6deg); }
+}
+@keyframes mark-float {
+  0% { transform: translateY(2px); opacity: 0.7; }
+  100% { transform: translateY(-6px); opacity: 1; }
+}
+@keyframes walk {
+  from { left: 0; }
+  to { left: calc(100% - 66px); }
+}
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+@keyframes lamp-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+@keyframes seg-fill {
+  from { transform: scaleY(0.2); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes blink {
+  50% { opacity: 0.25; }
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
