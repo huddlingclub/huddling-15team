@@ -58,7 +58,7 @@ export function SelectScreen({
 
       <div className="flex items-center gap-4 animate-pix-rise">
         <Penguin size="md" />
-        <SpeechBubble tail="left" className="flex-1">
+        <SpeechBubble className="flex-1">
           {SLOGAN}
         </SpeechBubble>
       </div>

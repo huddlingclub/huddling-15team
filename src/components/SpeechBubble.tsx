@@ -1,31 +1,19 @@
 import type { ReactNode } from 'react'
 
-type Tail = 'bottom' | 'left'
-
-const TAIL: Record<Tail, string> = {
-  bottom: '-bottom-2.5 left-1/2 -translate-x-1/2 border-r-4 border-b-4',
-  left: '-left-2.5 top-1/2 -translate-y-1/2 border-b-4 border-l-4',
-}
-
 interface Props {
   children: ReactNode
-  /** 꼬리가 향하는 쪽. 펭귄이 말풍선 아래면 bottom, 옆(왼쪽)이면 left */
-  tail?: Tail
   className?: string
 }
 
-/** 펭산이 말풍선 */
-export function SpeechBubble({ children, tail = 'bottom', className = '' }: Props) {
+/**
+ * 펭산이 말풍선. 에셋 카탈로그의 말풍선 그림을 9분할로 늘려 쓴다.
+ * 그림의 꼬리가 아래쪽 왼쪽에 있어서, 펭귄이 말풍선의 왼쪽 아래에 오도록 배치한다.
+ * 아래쪽 padding은 꼬리 자리라서 넉넉히 둔다.
+ */
+export function SpeechBubble({ children, className = '' }: Props) {
   return (
-    <div
-      role="status"
-      className={`relative border-4 border-pix-ink bg-pix-paper px-3 py-2 text-pix-body shadow-pix-sm ${className}`}
-    >
+    <div role="status" className={`pix-skin-bubble px-5 pt-3 pb-9 text-pix-body ${className}`}>
       {children}
-      <span
-        aria-hidden="true"
-        className={`absolute size-4 rotate-45 border-pix-ink bg-pix-paper ${TAIL[tail]}`}
-      />
     </div>
   )
 }

@@ -133,7 +133,7 @@ export function ResultScreen({
         <ScenePanel className="animate-pix-rise">
           <Penguin mood={copy.mood} size="lg" />
           {copy.scene && (
-            <SpeechBubble tail="left" className="flex-1">
+            <SpeechBubble className="flex-1">
               {copy.scene}
             </SpeechBubble>
           )}

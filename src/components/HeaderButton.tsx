@@ -13,7 +13,7 @@ export function HeaderButton({ children, onClick, disabled = false }: Props) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="min-h-11 cursor-pointer border-4 border-pix-ink bg-pix-sun px-3 font-pix-display text-pix-caption font-bold shadow-pix-sm focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange disabled:cursor-not-allowed disabled:bg-pix-paper-shade"
+      className="pix-skin-yellow min-h-11 cursor-pointer px-4 font-pix-display text-pix-caption font-bold text-pix-ink focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange disabled:cursor-not-allowed disabled:opacity-60 disabled:grayscale"
     >
       {children}
     </button>

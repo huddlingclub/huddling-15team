@@ -23,6 +23,29 @@
   image-rendering: pixelated;
 }
 
+/*
+ * 에셋 카탈로그(assets/SUNSET-asset/UI)의 버튼·말풍선 그림을 9분할(border-image)로 늘려 쓴다.
+ * 모서리는 그대로 두고 가운데만 늘어나서 버튼 크기가 달라도 픽셀 테두리가 흐려지지 않는다.
+ * 그림은 한 칸(픽셀)이 화면 4px이 되도록 2배 크기로 줄여 둔 것이라, slice 값은 그림 px(= 화면의 2배),
+ * width 값은 화면 px이다. 테두리가 실제 글자 자리를 차지하지 않도록 border-width는 따로 작게 둔다.
+ */
+@utility pix-skin-yellow {
+  border: 0.25rem solid transparent;
+  border-image: url("./assets/ui/button-yellow.png") 34 fill / 1.0625rem stretch;
+}
+
+@utility pix-skin-lavender {
+  /* 위·아래·왼·오른 순서가 아니라 CSS 규칙대로 위 오른 아래 왼 순서 */
+  border: 0.25rem solid transparent;
+  border-image: url("./assets/ui/button-lavender.png") 34 34 56 34 fill / 1.0625rem 1.0625rem 1.75rem 1.0625rem stretch;
+}
+
+@utility pix-skin-bubble {
+  /* 꼬리가 아래쪽 왼쪽에 있어서 왼쪽 조각(180)과 아래쪽 조각(116)을 크게 잡았다. */
+  border: 0.25rem solid transparent;
+  border-image: url("./assets/ui/speech-bubble.png") 76 75 116 180 fill / 2.375rem 2.34375rem 3.625rem 5.625rem stretch;
+}
+
 @layer base {
   html {
     background-color: var(--color-pix-night);

@@ -6,6 +6,7 @@ import { Penguin } from '../components/Penguin.tsx'
 import { PixelButton } from '../components/PixelButton.tsx'
 import { PixelCard } from '../components/PixelCard.tsx'
 import { ScenePanel } from '../components/ScenePanel.tsx'
+import { SpeechBubble } from '../components/SpeechBubble.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
 import type { CourseId, DayOffset, Verdict } from '../config.ts'
 import { CHECKLIST, verdictCopy } from '../content.ts'
@@ -72,7 +73,7 @@ export function GuideScreen({ context, onReady, onBack }: Props) {
         }
       >
         <Penguin mood={allChecked ? 'happy' : 'cheer'} size="lg" />
-        <div className="flex-1 border-4 border-pix-ink bg-pix-paper px-3 py-2 shadow-pix-sm">
+        <SpeechBubble className="flex-1">
           {allChecked ? (
             <p>준비 완료! 안전하게 돌아오자!</p>
           ) : (
@@ -83,7 +84,7 @@ export function GuideScreen({ context, onReady, onBack }: Props) {
               </p>
             </>
           )}
-        </div>
+        </SpeechBubble>
       </ScenePanel>
 
       <MissionCard
