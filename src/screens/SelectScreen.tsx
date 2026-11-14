@@ -71,7 +71,7 @@ export function SelectScreen({
 
       <fieldset>
         <legend className="sr-only">산 선택</legend>
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {MOUNTAINS.map((m) => (
             <ChoiceCard
               key={m.id}
@@ -79,10 +79,10 @@ export function SelectScreen({
               value={m.id}
               checked={mountainId === m.id}
               onChange={() => onMountain(m.id)}
-              className="flex items-center gap-3 px-3 py-2"
+              className="flex flex-col items-center gap-1 px-1 py-3 text-center"
             >
               <img src={mountainIconSrc} alt="" draggable={false} className="pixelated h-8 w-auto" />
-              <span className="flex-1 font-pix-display text-pix-heading font-bold">{m.name}</span>
+              <span className="font-pix-display text-pix-body font-bold">{m.name}</span>
               <span className="font-pix-display text-pix-caption font-bold">{m.elevationM}m</span>
             </ChoiceCard>
           ))}
