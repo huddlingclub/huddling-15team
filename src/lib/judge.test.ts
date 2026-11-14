@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import { judgeDescent, verdictFromMargin } from './judge.ts'
 import { EMPTY_STAMPS, grantBadge, parseStamps, recordMountain } from './badges.ts'
 import { buildShareText } from './share.ts'
+import { verdictCopy } from '../content.ts'
 import {
   formatClock,
   formatDuration,
@@ -163,4 +164,13 @@ test('시각·시간 표시', () => {
   assert.equal(formatDuration(120), '2시간')
   assert.equal(formatDuration(75), '1시간 15분')
   assert.equal(formatDuration(-40), '40분')
+})
+
+test('내일 판정이 빨강이면 "오늘" 대신 "내일" 문구를 쓴다', () => {
+  assert.equal(verdictCopy('red', 'today').badge, '오늘은 비추천!')
+  assert.equal(verdictCopy('red', 'tomorrow').badge, '내일은 비추천!')
+  assert.ok(!verdictCopy('red', 'tomorrow').bubble.includes('오늘'))
+  assert.ok(!verdictCopy('red', 'tomorrow').guide.includes('오늘'))
+  assert.equal(verdictCopy('green', 'tomorrow').badge, '도전 가능!')
+  assert.equal(verdictCopy('yellow', 'tomorrow').badge, '주의 필요!')
 })

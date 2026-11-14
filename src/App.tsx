@@ -279,6 +279,7 @@ export default function App() {
           {phase === 'guide' && showingJudgement && (
             <GuideScreen
               verdict={result.verdict}
+              day={dayOffset}
               courseId={courseId}
               onReady={() => grant(['ready'])}
               onRecalcShort={() => changeCourse('short')}
