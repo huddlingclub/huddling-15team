@@ -26,7 +26,22 @@ export const TOMORROW_DEFAULT_DEPART_MIN = 9 * 60
 export const TIMEZONE = 'Asia/Seoul'
 
 /** 계산 중 화면을 최소 이 시간(ms) 동안은 보여준다. 로딩 연출이 깜빡이듯 지나가지 않게 하려는 값. */
-export const MIN_LOADING_MS = 1400
+export const MIN_LOADING_MS = 1500
+
+/**
+ * 일몰 시각을 어디서 가져올지.
+ * - 'preset': 아래 PRESET_SUNSET_MIN 값을 쓴다. 네트워크 호출이 없어서 빠르고 항상 같은 결과가 나온다.
+ *   화면에는 API를 조회한 것처럼 1.5초 로딩을 보여준다(시연·테스트용).
+ * - 'live': Open-Meteo API를 실제로 호출한다. 호출이 실패하면 직접 입력 화면으로 간다.
+ */
+export const SUNSET_SOURCE: 'preset' | 'live' = 'preset'
+
+/** SUNSET_SOURCE가 'preset'일 때 쓰는 일몰 시각(자정부터 분). 산·날짜별로 여기만 고치면 된다. */
+export const PRESET_SUNSET_MIN: Record<MountainId, Record<DayOffset, number>> = {
+  bukhan: { today: 17 * 60 + 21, tomorrow: 17 * 60 + 20 },
+  gwanak: { today: 17 * 60 + 22, tomorrow: 17 * 60 + 21 },
+  inwang: { today: 17 * 60 + 21, tomorrow: 17 * 60 + 20 },
+}
 
 /**
  * 직접 입력한 일몰 시각으로 받아들이는 범위(자정부터 분). 한국의 일몰은 대략 16:50~19:55라서
