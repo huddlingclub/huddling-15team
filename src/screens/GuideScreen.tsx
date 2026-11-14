@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import sparkleSrc from '../assets/sprites/icon-sparkle.png'
 import { Disclaimer } from '../components/Disclaimer.tsx'
 import { MissionCard } from '../components/MissionCard.tsx'
@@ -17,16 +17,22 @@ const SPARKLES = ['top-2 left-4', 'top-4 right-6', 'bottom-3 left-1/2'] as const
 interface Props {
   verdict: Verdict
   courseId: CourseId
+  /** 준비물을 모두 체크했을 때 한 번 불린다 */
+  onReady: () => void
   onRecalcShort: () => void
   onOtherMountain: () => void
   onBackToResult: () => void
 }
 
-export function GuideScreen({ verdict, courseId, onRecalcShort, onOtherMountain, onBackToResult }: Props) {
+export function GuideScreen({ verdict, courseId, onReady, onRecalcShort, onOtherMountain, onBackToResult }: Props) {
   const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [checked, setChecked] = useState<ReadonlySet<string>>(new Set())
   const allChecked = checked.size === CHECKLIST.length
   const alreadyShort = courseId === 'short'
+
+  useEffect(() => {
+    if (allChecked) onReady()
+  }, [allChecked, onReady])
 
   const toggle = (id: string) =>
     setChecked((prev) => {

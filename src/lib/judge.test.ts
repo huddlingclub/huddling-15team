@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { judgeDescent, verdictFromMargin } from './judge.ts'
+import { EMPTY_STAMPS, grantBadge, parseStamps, recordMountain } from './badges.ts'
 import { buildShareText } from './share.ts'
 import {
   formatClock,
@@ -77,6 +78,31 @@ test('공유 문구', () => {
     verdictTitle: '도전 가능!',
   })
   assert.equal(text, '북한산 · 보통 코스 · 예상 하산 17:20 · 일몰 18:42 · 도전 가능')
+})
+
+test('배지는 한 번만 받고, 처음 받은 날짜가 유지된다', () => {
+  const first = grantBadge(EMPTY_STAMPS, 'green-light', '2026-11-14')
+  assert.equal(first.earned['green-light'], '2026-11-14')
+  const again = grantBadge(first, 'green-light', '2026-11-20')
+  assert.equal(again, first)
+  assert.equal(again.earned['green-light'], '2026-11-14')
+})
+
+test('확인한 산은 중복 없이 기록한다', () => {
+  let state = recordMountain(EMPTY_STAMPS, 'bukhan')
+  state = recordMountain(state, 'bukhan')
+  state = recordMountain(state, 'inwang')
+  assert.deepEqual(state.mountains, ['bukhan', 'inwang'])
+})
+
+test('저장된 글자가 이상해도 안전하게 읽는다', () => {
+  assert.deepEqual(parseStamps(null), EMPTY_STAMPS)
+  assert.deepEqual(parseStamps('깨진 글자'), EMPTY_STAMPS)
+  const parsed = parseStamps(
+    JSON.stringify({ earned: { ready: '2026-11-14', hacked: 'x' }, mountains: ['bukhan', 'bukhan', 'everest'] }),
+  )
+  assert.deepEqual(parsed.earned, { ready: '2026-11-14' })
+  assert.deepEqual(parsed.mountains, ['bukhan'])
 })
 
 test('시각 파싱', () => {

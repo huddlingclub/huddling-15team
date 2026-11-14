@@ -33,7 +33,7 @@ const TONE: Record<Verdict, string> = {
 }
 
 const MISSION_NOTE: Record<Verdict, string> = {
-  green: '이 계획이면 미션 달성! 하산 시각만 꼭 지켜줘.',
+  green: '이 계획이면 미션 달성이 가능해! 하산 시각만 꼭 지켜줘.',
   yellow: '미션은 가능하지만 빠듯해. 코스를 줄이면 더 안전해!',
   red: '오늘은 미션 보류. 무리하지 않는 것도 미션이야!',
 }
