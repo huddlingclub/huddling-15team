@@ -39,7 +39,7 @@ export function SunsetErrorScreen({ mountainName, dayLabel, onRetry, onManual, o
         <Penguin mood="worried" size="md" />
       </div>
 
-      <PixelCard tag="일몰 시각 직접 입력">
+      <PixelCard tone="lavender" tag="일몰 시각 직접 입력">
         <form onSubmit={submit} className="mt-2 flex flex-col gap-3">
           <label className="flex flex-col gap-2">
             <span>{dayLabel} {mountainName}의 일몰 시각 (날씨 앱에서 확인할 수 있어요)</span>

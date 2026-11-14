@@ -46,6 +46,20 @@
   border-image: url("./assets/ui/speech-bubble.png") 76 75 116 180 fill / 2.375rem 2.34375rem 3.625rem 5.625rem stretch;
 }
 
+/*
+ * 패널(카드) 그림. 테두리 장식이 두꺼워서 화면 20px(그림 40px)이 되도록 줄였다.
+ * 글자가 장식 테두리와 겹치지 않도록 border-width도 같은 20px로 잡아 내용이 테두리 안쪽에서 시작한다.
+ */
+@utility pix-skin-panel-cream {
+  border: 1.25rem solid transparent;
+  border-image: url("./assets/ui/panel-cream.png") 40 fill / 1.25rem stretch;
+}
+
+@utility pix-skin-panel-lavender {
+  border: 1.25rem solid transparent;
+  border-image: url("./assets/ui/panel-lavender.png") 40 fill / 1.25rem stretch;
+}
+
 @layer base {
   html {
     background-color: var(--color-pix-night);

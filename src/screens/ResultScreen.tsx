@@ -176,7 +176,7 @@ export function ResultScreen({
           style={reveal(1)}
         />
 
-        <PixelCard tag={`${mountain.name} · 코스 바꾸기`} className="animate-pix-rise" style={reveal(2)}>
+        <PixelCard tone="lavender" tag={`${mountain.name} · 코스 바꾸기`} className="animate-pix-rise" style={reveal(2)}>
           <fieldset className="mt-2">
             <legend className="sr-only">코스 다시 선택</legend>
             <div className="grid grid-cols-3 gap-2">

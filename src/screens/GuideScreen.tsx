@@ -97,7 +97,7 @@ export function GuideScreen({ context, onReady, onBack }: Props) {
         <p className="mt-2">{context ? verdictCopy(context.verdict, context.day).guide : GENERAL_GUIDE}</p>
       </PixelCard>
 
-      <PixelCard tag={`출발 전 체크리스트 ${checked.size}/${CHECKLIST.length}`}>
+      <PixelCard tone="lavender" tag={`출발 전 체크리스트 ${checked.size}/${CHECKLIST.length}`}>
         <ul className="mt-2 flex flex-col gap-3">
           {CHECKLIST.map((item) => (
             <li key={item.id}>
