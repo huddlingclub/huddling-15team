@@ -7,6 +7,7 @@ import {
   formatClock,
   formatDuration,
   isNextDay,
+  isPlausibleSunset,
   joinClock,
   parseClock,
   parseOpenMeteoLocal,
@@ -80,6 +81,27 @@ test('공유 문구', () => {
     verdictTitle: '도전 가능!',
   })
   assert.equal(text, '북한산 · 보통 코스 · 예상 하산 17:20 · 일몰 18:42 · 도전 가능')
+})
+
+test('내일 산행 공유 문구는 앞에 "내일"이 붙는다', () => {
+  const text = buildShareText({
+    mountainName: '북한산',
+    courseLabel: '짧은 코스',
+    finishMin: 12 * 60,
+    sunsetMin: 17 * 60 + 20,
+    verdictTitle: '도전 가능!',
+    day: 'tomorrow',
+  })
+  assert.equal(text, '내일 북한산 · 짧은 코스 · 예상 하산 12:00 · 일몰 17:20 · 도전 가능')
+})
+
+test('직접 입력한 일몰 시각은 16:00~21:00만 받는다', () => {
+  assert.equal(isPlausibleSunset(5 * 60), false)
+  assert.equal(isPlausibleSunset(16 * 60 - 1), false)
+  assert.equal(isPlausibleSunset(16 * 60), true)
+  assert.equal(isPlausibleSunset(17 * 60 + 20), true)
+  assert.equal(isPlausibleSunset(21 * 60), true)
+  assert.equal(isPlausibleSunset(21 * 60 + 1), false)
 })
 
 test('배지는 한 번만 받고, 처음 받은 날짜가 유지된다', () => {

@@ -4,6 +4,8 @@ import { SkyBackdrop, type SkyMood } from './components/SkyBackdrop.tsx'
 import {
   MIN_LOADING_MS,
   MOUNTAINS,
+  PRESET_SUNSET_MIN,
+  SUNSET_SOURCE,
   TOMORROW_DEFAULT_DEPART_MIN,
   type CourseId,
   type DayOffset,
@@ -165,7 +167,10 @@ export default function App() {
     try {
       const info: SunsetInfo =
         reusable ?? {
-          minutes: await fetchSunsetMinutes(mountain.latitude, mountain.longitude, day, controller.signal),
+          minutes:
+            SUNSET_SOURCE === 'preset'
+              ? PRESET_SUNSET_MIN[mountain.id][day]
+              : await fetchSunsetMinutes(mountain.latitude, mountain.longitude, day, controller.signal),
           source: 'api',
           dateKey,
         }

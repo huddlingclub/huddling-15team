@@ -7,13 +7,15 @@ interface ShareInput {
   sunsetMin: number
   /** 판정 제목(예: 도전 가능!) */
   verdictTitle: string
+  /** 내일 산행이면 앞에 "내일"을 붙여 오늘 결과와 헷갈리지 않게 한다. 생략하면 오늘로 본다. */
+  day?: 'today' | 'tomorrow'
 }
 
-/** 공유 문구: "북한산 · 보통 코스 · 예상 하산 17:20 · 일몰 18:42 · 도전 가능" */
+/** 공유 문구: "북한산 · 보통 코스 · 예상 하산 17:20 · 일몰 18:42 · 도전 가능" (내일이면 "내일 북한산 · …") */
 export function buildShareText(input: ShareInput): string {
   const title = input.verdictTitle.replace(/!$/, '')
   return [
-    input.mountainName,
+    input.day === 'tomorrow' ? `내일 ${input.mountainName}` : input.mountainName,
     input.courseLabel,
     `예상 하산 ${formatClock(input.finishMin)}`,
     `일몰 ${formatClock(input.sunsetMin)}`,

@@ -1,4 +1,4 @@
-import { TIMEZONE, type DayOffset } from '../config.ts'
+import { MANUAL_SUNSET_RANGE_MIN, TIMEZONE, type DayOffset } from '../config.ts'
 
 export const MINUTES_PER_DAY = 1440
 
@@ -50,6 +50,11 @@ export function parseClock(text: string): number | null {
 export function parseOpenMeteoLocal(iso: string): number | null {
   const match = /T(\d{2}):(\d{2})/.exec(iso)
   return match ? parseClock(`${match[1]}:${match[2]}`) : null
+}
+
+/** 직접 입력한 일몰 시각이 한국에서 있을 법한 범위 안인지 확인한다. */
+export function isPlausibleSunset(minutes: number): boolean {
+  return minutes >= MANUAL_SUNSET_RANGE_MIN.from && minutes <= MANUAL_SUNSET_RANGE_MIN.to
 }
 
 export function isNextDay(minutes: number): boolean {

@@ -108,6 +108,7 @@ export function ResultScreen({
       finishMin: result.finishMin,
       sunsetMin,
       verdictTitle: copy.badge,
+      day,
     })
     setShareNote(SHARE_NOTE[await shareText(text)])
   }
