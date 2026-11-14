@@ -7,8 +7,8 @@ import { PixelButton } from '../components/PixelButton.tsx'
 import { PixelCard } from '../components/PixelCard.tsx'
 import { ScenePanel } from '../components/ScenePanel.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
-import type { CourseId, Verdict } from '../config.ts'
-import { CHECKLIST, VERDICT_COPY } from '../content.ts'
+import type { CourseId, DayOffset, Verdict } from '../config.ts'
+import { CHECKLIST, verdictCopy } from '../content.ts'
 import { useScreenFocus } from '../hooks/useScreenFocus.ts'
 
 // 준비물을 다 챙기면 펭귄 장면 위에 반짝이가 깜빡인다. 위치는 장면 패널 기준(%·rem 단위 클래스).
@@ -16,6 +16,7 @@ const SPARKLES = ['top-2 left-4', 'top-4 right-6', 'bottom-3 left-1/2'] as const
 
 interface Props {
   verdict: Verdict
+  day: DayOffset
   courseId: CourseId
   /** 준비물을 모두 체크했을 때 한 번 불린다 */
   onReady: () => void
@@ -24,7 +25,7 @@ interface Props {
   onBackToResult: () => void
 }
 
-export function GuideScreen({ verdict, courseId, onReady, onRecalcShort, onOtherMountain, onBackToResult }: Props) {
+export function GuideScreen({ verdict, day, courseId, onReady, onRecalcShort, onOtherMountain, onBackToResult }: Props) {
   const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [checked, setChecked] = useState<ReadonlySet<string>>(new Set())
   const allChecked = checked.size === CHECKLIST.length
@@ -82,7 +83,7 @@ export function GuideScreen({ verdict, courseId, onReady, onRecalcShort, onOther
       />
 
       <PixelCard tag="안전 메시지">
-        <p className="mt-2">{VERDICT_COPY[verdict].guide}</p>
+        <p className="mt-2">{verdictCopy(verdict, day).guide}</p>
       </PixelCard>
 
       <PixelCard tag={`출발 전 체크리스트 ${checked.size}/${CHECKLIST.length}`}>

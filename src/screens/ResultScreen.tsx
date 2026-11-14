@@ -19,7 +19,7 @@ import {
   type Mountain,
   type Verdict,
 } from '../config.ts'
-import { VERDICT_COPY } from '../content.ts'
+import { verdictCopy } from '../content.ts'
 import { useScreenFocus } from '../hooks/useScreenFocus.ts'
 import type { JudgeResult } from '../lib/judge.ts'
 import { buildShareText, shareText, type ShareOutcome } from '../lib/share.ts'
@@ -37,6 +37,8 @@ const MISSION_NOTE: Record<Verdict, string> = {
   yellow: '미션은 가능하지만 빠듯해. 코스를 줄이면 더 안전해!',
   red: '오늘은 미션 보류. 무리하지 않는 것도 미션이야!',
 }
+
+const RED_TOMORROW_MISSION_NOTE = '내일 이 계획은 미션 보류. 출발 시각을 앞당겨 보자!'
 
 const SHARE_NOTE: Record<ShareOutcome, string | null> = {
   shared: null,
@@ -94,7 +96,7 @@ export function ResultScreen({
 }: Props) {
   const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [shareNote, setShareNote] = useState<string | null>(null)
-  const copy = VERDICT_COPY[result.verdict]
+  const copy = verdictCopy(result.verdict, day)
   const course = COURSES.find((c) => c.id === courseId)
   const roundTripMin = mountain.roundTripMin[courseId]
   const late = result.marginMin < 0
@@ -120,7 +122,7 @@ export function ResultScreen({
       <div key={runKey} className="flex flex-col gap-8">
         <PixelCard>
           <div className="flex items-center justify-center gap-4">
-            <TrafficLight verdict={result.verdict} />
+            <TrafficLight verdict={result.verdict} day={day} />
             <div className="flex flex-col gap-1">
               <p className={`font-pix-display text-pix-heading font-bold ${TONE[result.verdict]}`}>{copy.badge}</p>
               <p>{copy.bubble}</p>
@@ -137,7 +139,7 @@ export function ResultScreen({
           )}
         </ScenePanel>
 
-        <MissionCard done={result.verdict === 'green'} note={MISSION_NOTE[result.verdict]} className="animate-pix-rise" />
+        <MissionCard done={result.verdict === 'green'} note={result.verdict === 'red' && day === 'tomorrow' ? RED_TOMORROW_MISSION_NOTE : MISSION_NOTE[result.verdict]} className="animate-pix-rise" />
 
         <PixelCard className="animate-pix-rise" style={reveal(0)}>
           <dl className="divide-y-4 divide-pix-paper-shade">
