@@ -28,6 +28,12 @@ export const TIMEZONE = 'Asia/Seoul'
 /** 계산 중 화면을 최소 이 시간(ms) 동안은 보여준다. 로딩 연출이 깜빡이듯 지나가지 않게 하려는 값. */
 export const MIN_LOADING_MS = 1400
 
+/**
+ * 직접 입력한 일몰 시각으로 받아들이는 범위(자정부터 분). 한국의 일몰은 대략 16:50~19:55라서
+ * 여유를 두고 16:00~21:00으로 잡는다. 05:00처럼 오타가 난 값이 판정에 쓰이지 않게 막는 용도다.
+ */
+export const MANUAL_SUNSET_RANGE_MIN = { from: 16 * 60, to: 21 * 60 } as const
+
 export const SUNSET_API = {
   baseUrl: 'https://api.open-meteo.com/v1/forecast',
   timeoutMs: 8000,

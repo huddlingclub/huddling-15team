@@ -5,7 +5,8 @@ import { PixelCard } from '../components/PixelCard.tsx'
 import { SpeechBubble } from '../components/SpeechBubble.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
 import { useScreenFocus } from '../hooks/useScreenFocus.ts'
-import { parseClock } from '../lib/time.ts'
+import { MANUAL_SUNSET_RANGE_MIN } from '../config.ts'
+import { formatClock, isPlausibleSunset, parseClock } from '../lib/time.ts'
 
 interface Props {
   mountainName: string
@@ -21,10 +22,12 @@ export function SunsetErrorScreen({ mountainName, dayLabel, onRetry, onManual, o
   const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [value, setValue] = useState('')
   const parsed = parseClock(value)
+  const outOfRange = parsed !== null && !isPlausibleSunset(parsed)
+  const valid = parsed !== null && !outOfRange
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (parsed !== null) onManual(parsed)
+    if (valid) onManual(parsed)
   }
 
   return (
@@ -48,7 +51,13 @@ export function SunsetErrorScreen({ mountainName, dayLabel, onRetry, onManual, o
               className="border-4 border-pix-ink bg-pix-paper px-3 py-2 font-pix-display text-pix-heading font-bold focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange"
             />
           </label>
-          <PixelButton type="submit" disabled={parsed === null}>
+          {outOfRange && (
+            <p role="alert" className="border-4 border-pix-ink bg-pix-paper px-3 py-1 text-pix-caption">
+              일몰은 보통 {formatClock(MANUAL_SUNSET_RANGE_MIN.from)}~{formatClock(MANUAL_SUNSET_RANGE_MIN.to)} 사이예요.
+              오전·오후를 확인해줘!
+            </p>
+          )}
+          <PixelButton type="submit" disabled={!valid}>
             이 시각으로 계산하기
           </PixelButton>
         </form>
