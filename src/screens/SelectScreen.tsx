@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import mountainIconSrc from '../assets/sprites/icon-mountain.png'
 import { ChoiceCard } from '../components/ChoiceCard.tsx'
+import { MissionCard } from '../components/MissionCard.tsx'
 import { Penguin } from '../components/Penguin.tsx'
 import { PixelButton } from '../components/PixelButton.tsx'
 import { SpeechBubble } from '../components/SpeechBubble.tsx'
@@ -68,6 +69,8 @@ export function SelectScreen({
           {SLOGAN}
         </SpeechBubble>
       </div>
+
+      <MissionCard done={false} note="오늘의 미션은 정상 정복이 아니라 안전한 귀환이야!" />
 
       <fieldset>
         <legend className="sr-only">산 선택</legend>

@@ -5,10 +5,11 @@ import worriedSrc from '../assets/sprites/penguin-worried.png'
 import restSrc from '../assets/sprites/penguin-rest.png'
 import type { PenguinMood } from '../content.ts'
 
-type Size = 'sm' | 'md' | 'lg'
+type Size = 'xs' | 'sm' | 'md' | 'lg'
 
 // 스프라이트마다 가로세로 비율이 달라서 높이만 정하고 너비는 자동으로 둔다.
 const SIZE: Record<Size, string> = {
+  xs: 'h-12 w-auto',
   sm: 'h-20 w-auto',
   md: 'h-28 w-auto',
   lg: 'h-36 w-auto',

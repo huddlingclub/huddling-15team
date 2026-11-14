@@ -10,6 +10,7 @@
   --animate-pix-flash: pix-flash 0.3s steps(2) both;
   --animate-pix-lamp-on: pix-lamp-on 0.4s steps(2) backwards;
   --animate-pix-grow: pix-grow 1.2s steps(12) both;
+  --animate-pix-walk: pix-walk 1.2s steps(12) both;
   --animate-pix-block: pix-block 1.2s steps(1) infinite;
   --animate-pix-blink: pix-blink 1s steps(2) infinite;
 
@@ -49,6 +50,10 @@
   @keyframes pix-grow {
     from { transform: scaleX(0); }
     to { transform: scaleX(1); }
+  }
+  /* 걷기: 시작점(왼쪽 끝)에서 출발해 요소에 지정한 left 위치까지 간다. 막대가 차오르는 pix-grow와 같은 길이로 맞췄다. */
+  @keyframes pix-walk {
+    from { left: 0%; }
   }
   @keyframes pix-block {
     0% { opacity: 0.25; }

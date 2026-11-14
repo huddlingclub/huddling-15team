@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
 import { ChoiceCard } from '../components/ChoiceCard.tsx'
+import { MissionCard } from '../components/MissionCard.tsx'
 import { Disclaimer } from '../components/Disclaimer.tsx'
 import { Penguin } from '../components/Penguin.tsx'
 import { PixelButton } from '../components/PixelButton.tsx'
@@ -29,6 +30,12 @@ const TONE: Record<Verdict, string> = {
   green: 'text-pix-green-dim',
   yellow: 'text-pix-yellow-dim',
   red: 'text-pix-red-dim',
+}
+
+const MISSION_NOTE: Record<Verdict, string> = {
+  green: '이 계획이면 미션 달성! 하산 시각만 꼭 지켜줘.',
+  yellow: '미션은 가능하지만 빠듯해. 코스를 줄이면 더 안전해!',
+  red: '오늘은 미션 보류. 무리하지 않는 것도 미션이야!',
 }
 
 const SHARE_NOTE: Record<ShareOutcome, string | null> = {
@@ -129,6 +136,8 @@ export function ResultScreen({
           )}
         </ScenePanel>
 
+        <MissionCard done={result.verdict === 'green'} note={MISSION_NOTE[result.verdict]} className="animate-pix-rise" />
+
         <PixelCard className="animate-pix-rise" style={reveal(0)}>
           <dl className="divide-y-4 divide-pix-paper-shade">
             <StatRow label="예상 하산">
@@ -161,6 +170,7 @@ export function ResultScreen({
               finishMin={result.finishMin}
               sunsetMin={sunsetMin}
               verdict={result.verdict}
+              mood={copy.mood}
             />
           </div>
         </PixelCard>
