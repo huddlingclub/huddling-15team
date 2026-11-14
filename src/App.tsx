@@ -29,7 +29,7 @@ import { seoulDateKey, seoulMinutes, targetDateKey } from './lib/time.ts'
 import { CalculatingScreen } from './screens/CalculatingScreen.tsx'
 import { GuideScreen } from './screens/GuideScreen.tsx'
 import { ResultScreen } from './screens/ResultScreen.tsx'
-import { SelectScreen } from './screens/SelectScreen.tsx'
+import { SelectScreen, type SunsetLookup } from './screens/SelectScreen.tsx'
 import { StampsScreen } from './screens/StampsScreen.tsx'
 import { SunsetErrorScreen } from './screens/SunsetErrorScreen.tsx'
 
@@ -59,6 +59,9 @@ export default function App() {
   const [departMin, setDepartMin] = useState<number | null>(null)
   const [trailheadIndex, setTrailheadIndex] = useState(0)
   const [sunsets, setSunsets] = useState<Partial<Record<string, SunsetInfo>>>({})
+  /** 선택 화면에서 미리 조회한 결과 상태 (산·날짜별). 성공 값은 sunsets 캐시에 들어간다 */
+  const [prefetchErrors, setPrefetchErrors] = useState<Partial<Record<string, true>>>({})
+  const prefetchingRef = useRef(new Set<string>())
   /** 판정에 쓴 입산 시각. 결과 화면 안에서 시계가 흘러 숫자가 흔들리지 않게 고정한다 */
   const [checkedAtMin, setCheckedAtMin] = useState(0)
   const [runKey, setRunKey] = useState(0)
@@ -105,6 +108,55 @@ export default function App() {
   const sunset = mountainId ? sunsets[sunsetKey(mountainId, dayOffset)] : undefined
   /** 입산 시간 칸에 보여 줄 값 */
   const shownDepartMin = departMin ?? (dayOffset === 'tomorrow' ? TOMORROW_DEFAULT_DEPART_MIN : nowMin)
+
+  // 산이나 날짜를 고르면 Open-Meteo 일몰 시각을 바로 자동 조회해 둔다.
+  // 확인하기를 누를 때는 이 캐시를 그대로 써서 기다리지 않는다.
+  useEffect(() => {
+    // 결과 화면에 표시 중인 값이 바뀌지 않도록 선택 화면에서만 미리 조회한다
+    if (phase !== 'select' || !mountain) return
+    const key = sunsetKey(mountain.id, dayOffset)
+    const dateKey = targetDateKey(dayOffset)
+    const cached = sunsets[key]
+    if (cached && cached.source === 'api' && cached.dateKey === dateKey) return
+    if (prefetchErrors[key] || prefetchingRef.current.has(key)) return
+
+    // 'preset' 모드에서는 네트워크 없이 설정값을 바로 넣는다 (startCheck와 같은 기준)
+    if (SUNSET_SOURCE === 'preset') {
+      const minutes = PRESET_SUNSET_MIN[mountain.id][dayOffset]
+      setSunsets((prev) => ({ ...prev, [key]: { minutes, source: 'api', dateKey } }))
+      return
+    }
+
+    prefetchingRef.current.add(key)
+    fetchSunsetMinutes(mountain.latitude, mountain.longitude, dayOffset)
+      // 직접 입력한 값은 그 판정에서만 쓰므로(startCheck와 동일) API 값으로 갱신한다
+      .then((minutes) => setSunsets((prev) => ({ ...prev, [key]: { minutes, source: 'api', dateKey } })))
+      .catch(() => setPrefetchErrors((prev) => ({ ...prev, [key]: true })))
+      .finally(() => prefetchingRef.current.delete(key))
+  }, [phase, mountain, dayOffset, sunsets, prefetchErrors])
+
+  const retryPrefetch = () => {
+    if (!mountainId) return
+    const key = sunsetKey(mountainId, dayOffset)
+    setPrefetchErrors((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
+
+  /** 선택 화면 안내 박스에 보여 줄 자동 조회 상태 */
+  const lookupSunset = (): SunsetLookup => {
+    if (!mountainId) return { state: 'idle' }
+    const key = sunsetKey(mountainId, dayOffset)
+    const cached = sunsets[key]
+    if (cached && cached.dateKey === targetDateKey(dayOffset)) {
+      return { state: 'ok', minutes: cached.minutes, source: cached.source }
+    }
+    if (prefetchErrors[key]) return { state: 'error' }
+    return { state: 'loading' }
+  }
+  const sunsetLookup = lookupSunset()
 
   const selectMountain = (id: MountainId) => {
     setMountainId(id)
@@ -237,6 +289,8 @@ export default function App() {
               day={dayOffset}
               departMin={shownDepartMin}
               trailheadIndex={trailheadIndex}
+              sunsetLookup={sunsetLookup}
+              onRetrySunset={retryPrefetch}
               onMountain={selectMountain}
               onCourse={setCourseId}
               onDay={setDayOffset}

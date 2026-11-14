@@ -7,13 +7,23 @@ import { PixelSelect } from '../components/PixelSelect.tsx'
 import { PixelTimePicker } from '../components/PixelTimePicker.tsx'
 import { SpeechBubble } from '../components/SpeechBubble.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
-import { COURSES, MOUNTAINS, type CourseId, type DayOffset, type MountainId } from '../config.ts'
+import { COURSES, MOUNTAINS, SUNSET_SOURCE, type CourseId, type DayOffset, type MountainId } from '../config.ts'
 import { SLOGAN } from '../content.ts'
 import { useScreenFocus } from '../hooks/useScreenFocus.ts'
-import { formatDuration } from '../lib/time.ts'
+import { formatClock, formatDuration } from '../lib/time.ts'
+
+/** 선택 화면에서 자동 조회한 일몰 시각 상태 */
+export type SunsetLookup =
+  | { state: 'idle' }
+  | { state: 'loading' }
+  | { state: 'ok'; minutes: number; source: 'api' | 'manual' }
+  | { state: 'error' }
 
 interface Props {
   mountainId: MountainId | null
+  sunsetLookup: SunsetLookup
+  /** 자동 조회가 실패했을 때 다시 조회 */
+  onRetrySunset: () => void
   courseId: CourseId | null
   day: DayOffset
   /** 입산 시간 칸에 보여 줄 값(자정부터 분) */
@@ -39,6 +49,8 @@ export function SelectScreen({
   day,
   departMin,
   trailheadIndex,
+  sunsetLookup,
+  onRetrySunset,
   onMountain,
   onCourse,
   onDay,
@@ -124,9 +136,38 @@ export function SelectScreen({
         </div>
       </fieldset>
 
-      <p className="border-4 border-pix-ink bg-pix-paper px-3 py-2 text-pix-caption shadow-pix-sm">
-        Open-Meteo 일출·일몰 조회 · 실패하면 일몰 시각을 직접 입력해요.
-      </p>
+      <div
+        className="flex items-center gap-2 border-4 border-pix-ink bg-pix-paper px-3 py-2 text-pix-caption shadow-pix-sm"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="flex-1">
+          {sunsetLookup.state === 'idle' && '산을 고르면 일몰 시각을 자동으로 불러와요.'}
+          {sunsetLookup.state === 'loading' &&
+            `${mountain?.name ?? ''} ${day === 'tomorrow' ? '내일' : '오늘'} 일몰 시각을 불러오는 중…`}
+          {sunsetLookup.state === 'ok' && (
+            <>
+              {mountain?.name} {day === 'tomorrow' ? '내일' : '오늘'} 일몰{' '}
+              <b className="font-pix-display text-pix-body">{formatClock(sunsetLookup.minutes)}</b>
+              {sunsetLookup.source === 'manual'
+                ? ' · 직접 입력한 시각'
+                : SUNSET_SOURCE === 'live'
+                  ? ' · Open-Meteo 자동 조회'
+                  : ' · 기본 설정값'}
+            </>
+          )}
+          {sunsetLookup.state === 'error' && '일몰 자동 조회에 실패했어요. 다시 조회하거나, 확인하기 후 직접 입력할 수 있어요.'}
+        </p>
+        {sunsetLookup.state === 'error' && (
+          <button
+            type="button"
+            onClick={onRetrySunset}
+            className="min-h-11 shrink-0 cursor-pointer border-4 border-pix-ink bg-pix-sun px-2 font-pix-display text-pix-caption font-bold focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange"
+          >
+            다시 조회
+          </button>
+        )}
+      </div>
 
       {/* 스크롤해도 항상 보이도록 화면 아래에 고정한다. */}
       <div className="fixed inset-x-0 bottom-0 z-10 border-t-4 border-pix-ink bg-pix-night">
