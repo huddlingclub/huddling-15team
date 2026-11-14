@@ -35,6 +35,36 @@ const STARS = [
   { top: '18%', left: '92%' },
 ]
 
+/** 그림을 이어 붙일 개수. 아주 넓은 화면(4K)까지 채우도록 넉넉히 잡는다. */
+const TILE_COUNT = 9
+
+interface SpriteRowProps {
+  src: string
+  /** 한 장의 가로 크기. 화면이 넓어도 그림이 늘어나 깨지지 않도록 화면 너비와 상관없이 고정한다 */
+  widthClass: string
+  className?: string
+}
+
+/**
+ * 같은 그림을 가운데부터 좌우로 이어 붙여 화면 아래를 채운다.
+ * 한 장씩 좌우를 뒤집어 놓아서 이음새에서 산 모양이 끊기지 않고 이어진다.
+ */
+function SpriteRow({ src, widthClass, className = '' }: SpriteRowProps) {
+  return (
+    <div className={`absolute inset-x-0 flex justify-center overflow-hidden ${className}`}>
+      {Array.from({ length: TILE_COUNT }, (_, index) => (
+        <img
+          key={index}
+          src={src}
+          alt=""
+          draggable={false}
+          className={`pixelated h-auto shrink-0 ${widthClass} ${index % 2 === 1 ? '-scale-x-100' : ''}`}
+        />
+      ))}
+    </div>
+  )
+}
+
 interface Props {
   mood: SkyMood
 }
@@ -76,20 +106,9 @@ export function SkyBackdrop({ mood }: Props) {
       )}
 
       {/* Figma 스프라이트: 멀리 산 → 앞쪽 숲 순서로 아래에 깐다 */}
-      <img
-        src={mountainSrc}
-        alt=""
-        draggable={false}
-        // 1.5배로 키워 아래에 고정된 바텀시트 위로 봉우리가 올라오게 한다(가운데 기준으로 키워서 양옆은 잘린다).
-        // 너무 크게 키우면 그림의 픽셀이 거칠게 깨져 보여서 이 정도로 둔다.
-        className={`pixelated absolute inset-x-0 bottom-16 w-full origin-bottom scale-150 ${SPRITE_TONE[mood]}`}
-      />
-      <img
-        src={forestSrc}
-        alt=""
-        draggable={false}
-        className={`pixelated absolute inset-x-0 bottom-0 w-full ${SPRITE_TONE[mood]}`}
-      />
+      {/* 휴대폰은 아래 고정 버튼 위로 봉우리가 보이도록 높게, PC(md 이상)는 더 아래로 내린다. */}
+      <SpriteRow src={mountainSrc} widthClass="w-144" className={`bottom-16 md:bottom-8 ${SPRITE_TONE[mood]}`} />
+      <SpriteRow src={forestSrc} widthClass="w-140" className={`bottom-0 ${SPRITE_TONE[mood]}`} />
     </div>
   )
 }
