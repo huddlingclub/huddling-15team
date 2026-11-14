@@ -4,6 +4,7 @@ import { ChoiceCard } from '../components/ChoiceCard.tsx'
 import { MissionCard } from '../components/MissionCard.tsx'
 import { Penguin } from '../components/Penguin.tsx'
 import { PixelButton } from '../components/PixelButton.tsx'
+import { PixelSelect } from '../components/PixelSelect.tsx'
 import { SpeechBubble } from '../components/SpeechBubble.tsx'
 import { TitlePlate } from '../components/TitlePlate.tsx'
 import { COURSES, MOUNTAINS, type CourseId, type DayOffset, type MountainId } from '../config.ts'
@@ -27,8 +28,12 @@ interface Props {
   onSubmit: () => void
 }
 
-const FIELD_CONTROL =
-  'mt-1 w-full min-h-11 bg-transparent font-pix-display text-pix-body font-bold outline-none disabled:text-pix-ink-soft'
+const DAY_OPTIONS = [
+  { value: 'today', label: '오늘' },
+  { value: 'tomorrow', label: '내일' },
+] as const
+
+const FIELD_CONTROL = 'mt-1 w-full min-h-11 bg-transparent font-pix-display text-pix-body font-bold outline-none'
 
 /** 라벨이 붙은 입력 칸. 칸 전체를 누르면 안쪽 입력이 선택된다. */
 function Field({ label, children, className = '' }: { label: string; children: ReactNode; className?: string }) {
@@ -59,8 +64,11 @@ export function SelectScreen({
   const mountain = MOUNTAINS.find((m) => m.id === mountainId)
   const ready = mountainId !== null && courseId !== null
 
+  const trailheadOptions = (mountain?.trailheads ?? []).map((name, index) => ({ value: String(index), label: name }))
+
   return (
-    <div className="flex flex-col gap-8">
+    // 아래쪽 여백(pb-28)은 화면 아래에 고정된 버튼이 내용을 가리지 않게 하려는 공간이다.
+    <div className="flex flex-col gap-8 pb-28">
       <TitlePlate ref={headingRef}>오늘은 어느 산에 갈까?</TitlePlate>
 
       <div className="flex items-center gap-4 animate-pix-rise">
@@ -93,30 +101,16 @@ export function SelectScreen({
       </fieldset>
 
       <div className="grid grid-cols-3 gap-3">
-        <Field label="들머리" className="col-span-2">
-          <select
-            className={FIELD_CONTROL}
-            disabled={!mountain}
-            value={trailheadIndex}
-            onChange={(e) => onTrailhead(Number(e.target.value))}
-          >
-            {mountain ? (
-              mountain.trailheads.map((name, index) => (
-                <option key={name} value={index}>
-                  {name}
-                </option>
-              ))
-            ) : (
-              <option>산을 먼저 골라줘</option>
-            )}
-          </select>
-        </Field>
-        <Field label="날짜">
-          <select className={FIELD_CONTROL} value={day} onChange={(e) => onDay(e.target.value as DayOffset)}>
-            <option value="today">오늘</option>
-            <option value="tomorrow">내일</option>
-          </select>
-        </Field>
+        <PixelSelect
+          label="들머리"
+          className="col-span-2"
+          value={String(trailheadIndex)}
+          options={trailheadOptions}
+          disabled={!mountain}
+          placeholder="산을 먼저 골라줘"
+          onChange={(value) => onTrailhead(Number(value))}
+        />
+        <PixelSelect label="날짜" value={day} options={DAY_OPTIONS} onChange={(value) => onDay(value as DayOffset)} />
       </div>
 
       <Field label="입산 시간">
@@ -155,15 +149,14 @@ export function SelectScreen({
         Open-Meteo 일출·일몰 조회 · 실패하면 일몰 시각을 직접 입력해요.
       </p>
 
-      <div className="flex flex-col gap-3">
-        <PixelButton disabled={!ready} onClick={onSubmit}>
-          하산 가능 여부 확인하기
-        </PixelButton>
-        {!ready && (
-          <p className="border-4 border-pix-ink bg-pix-paper px-3 py-1 text-center text-pix-body shadow-pix-sm">
-            산과 코스를 모두 골라줘!
-          </p>
-        )}
+      {/* 스크롤해도 항상 보이도록 화면 아래에 고정한다. */}
+      <div className="fixed inset-x-0 bottom-0 z-10 border-t-4 border-pix-ink bg-pix-night">
+        <div className="mx-auto flex max-w-sm flex-col gap-2 px-4 py-3">
+          {!ready && <p className="text-center text-pix-caption text-pix-paper">산과 코스를 모두 골라줘!</p>}
+          <PixelButton disabled={!ready} onClick={onSubmit}>
+            하산 가능 여부 확인하기
+          </PixelButton>
+        </div>
       </div>
     </div>
   )

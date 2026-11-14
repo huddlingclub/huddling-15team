@@ -77,6 +77,7 @@ export function GuideScreen({ verdict, courseId, onReady, onRecalcShort, onOther
 
       <MissionCard
         done={allChecked}
+        doneLabel="준비 완료!"
         note={allChecked ? '준비물을 다 챙겼어! 이제 안전하게 다녀오자.' : '준비물을 모두 체크하면 미션 준비 완료!'}
       />
 

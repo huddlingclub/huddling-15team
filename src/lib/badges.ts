@@ -16,7 +16,7 @@ export interface BadgeInfo {
 export const BADGES: readonly BadgeInfo[] = [
   { id: 'first-check', name: '첫 출발 준비', hint: '처음으로 하산 가능 여부를 확인했어요' },
   { id: 'green-light', name: '초록불 획득', hint: '초록불 판정을 받았어요' },
-  { id: 'three-mountains', name: '세 산 탐험가', hint: '세 산을 모두 확인했어요' },
+  { id: 'three-mountains', name: '산탐험가', hint: '세 산을 모두 확인했어요' },
   { id: 'short-saver', name: '코스 줄이기 달인', hint: '코스를 줄여서 초록불을 만들었어요' },
   { id: 'wise-choice', name: '쉬어가는 용기', hint: '빨간불에 무리하지 않고 내일로 미뤘어요' },
   { id: 'ready', name: '준비물 완벽', hint: '준비물을 모두 챙겼어요' },
