@@ -14,22 +14,32 @@ import { useScreenFocus } from '../hooks/useScreenFocus.ts'
 // 준비물을 다 챙기면 펭귄 장면 위에 반짝이가 깜빡인다. 위치는 장면 패널 기준(%·rem 단위 클래스).
 const SPARKLES = ['top-2 left-4', 'top-4 right-6', 'bottom-3 left-1/2'] as const
 
-interface Props {
+/** 판정 결과에서 들어왔을 때만 있는 정보. 없으면(헤더 버튼으로 연 경우) 판정 관련 버튼을 숨긴다. */
+export interface GuideContext {
   verdict: Verdict
   day: DayOffset
   courseId: CourseId
-  /** 준비물을 모두 체크했을 때 한 번 불린다 */
-  onReady: () => void
   onRecalcShort: () => void
   onOtherMountain: () => void
-  onBackToResult: () => void
 }
 
-export function GuideScreen({ verdict, day, courseId, onReady, onRecalcShort, onOtherMountain, onBackToResult }: Props) {
+// 판정 없이 열었을 때 보여 주는 안전 메시지
+const GENERAL_GUIDE =
+  '해가 지기 전에 내려오는 게 가장 중요해요. 하산을 시작할 시각을 미리 정하고, 그 시각이 되면 어디서든 내려와요.'
+
+interface Props {
+  context: GuideContext | null
+  /** 준비물을 모두 체크했을 때 한 번 불린다 */
+  onReady: () => void
+  /** 판정 화면(또는 이전 화면)으로 돌아간다 */
+  onBack: () => void
+}
+
+export function GuideScreen({ context, onReady, onBack }: Props) {
   const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [checked, setChecked] = useState<ReadonlySet<string>>(new Set())
   const allChecked = checked.size === CHECKLIST.length
-  const alreadyShort = courseId === 'short'
+  const alreadyShort = context?.courseId === 'short'
 
   useEffect(() => {
     if (allChecked) onReady()
@@ -83,7 +93,7 @@ export function GuideScreen({ verdict, day, courseId, onReady, onRecalcShort, on
       />
 
       <PixelCard tag="안전 메시지">
-        <p className="mt-2">{verdictCopy(verdict, day).guide}</p>
+        <p className="mt-2">{context ? verdictCopy(context.verdict, context.day).guide : GENERAL_GUIDE}</p>
       </PixelCard>
 
       <PixelCard tag={`출발 전 체크리스트 ${checked.size}/${CHECKLIST.length}`}>
@@ -122,23 +132,27 @@ export function GuideScreen({ verdict, day, courseId, onReady, onRecalcShort, on
       <Disclaimer />
 
       <div className="flex flex-col gap-3">
-        <PixelButton variant="secondary" disabled={alreadyShort} onClick={onRecalcShort}>
-          짧은 코스로 다시 계산하기
-        </PixelButton>
-        {alreadyShort && (
-          <p className="border-4 border-pix-ink bg-pix-paper px-3 py-1 text-center shadow-pix-sm">
-            이미 가장 짧은 코스예요.
-          </p>
+        {context && (
+          <>
+            <PixelButton variant="secondary" disabled={alreadyShort} onClick={context.onRecalcShort}>
+              짧은 코스로 다시 계산하기
+            </PixelButton>
+            {alreadyShort && (
+              <p className="border-4 border-pix-ink bg-pix-paper px-3 py-1 text-center shadow-pix-sm">
+                이미 가장 짧은 코스예요.
+              </p>
+            )}
+            <PixelButton variant="secondary" onClick={context.onOtherMountain}>
+              다른 산 선택하기
+            </PixelButton>
+          </>
         )}
-        <PixelButton variant="secondary" onClick={onOtherMountain}>
-          다른 산 선택하기
-        </PixelButton>
         <button
           type="button"
-          onClick={onBackToResult}
-          className="cursor-pointer self-center border-4 border-pix-ink bg-pix-ink px-3 py-1 text-pix-paper focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-sun"
+          onClick={onBack}
+          className="min-h-11 cursor-pointer self-center border-4 border-pix-ink bg-pix-ink px-3 py-1 text-pix-paper focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-sun"
         >
-          판정 화면으로 돌아가기
+          {context ? '판정 화면으로 돌아가기' : '돌아가기'}
         </button>
       </div>
     </div>

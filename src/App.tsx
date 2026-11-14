@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { HeaderButton } from './components/HeaderButton.tsx'
 import { NewBadgeToast } from './components/NewBadgeToast.tsx'
 import { SkyBackdrop, type SkyMood } from './components/SkyBackdrop.tsx'
 import {
@@ -27,7 +28,7 @@ import { judgeDescent } from './lib/judge.ts'
 import { fetchSunsetMinutes } from './lib/sunset.ts'
 import { seoulDateKey, seoulMinutes, targetDateKey } from './lib/time.ts'
 import { CalculatingScreen } from './screens/CalculatingScreen.tsx'
-import { GuideScreen } from './screens/GuideScreen.tsx'
+import { GuideScreen, type GuideContext } from './screens/GuideScreen.tsx'
 import { ResultScreen } from './screens/ResultScreen.tsx'
 import { SelectScreen } from './screens/SelectScreen.tsx'
 import { StampsScreen } from './screens/StampsScreen.tsx'
@@ -72,6 +73,10 @@ export default function App() {
   const lastVerdictRef = useRef<Verdict | null>(null)
   /** 스탬프 화면에서 돌아갈 화면 */
   const returnPhaseRef = useRef<Phase>('select')
+  /** 헤더 버튼으로 연 안전 가이드(판정 없는 안내)인지. 결과 화면에서 연 가이드는 false */
+  const [standaloneGuide, setStandaloneGuide] = useState(false)
+  /** 판정 없이 연 안전 가이드에서 돌아갈 화면 */
+  const guideReturnRef = useRef<Phase>('select')
 
   useEffect(() => () => requestRef.current?.abort(), [])
 
@@ -142,6 +147,20 @@ export default function App() {
     setPhase('stamps')
   }
 
+  /** 판정 결과가 있는 화면에서는 판정 안내가 붙은 가이드를, 그 밖에서는 일반 안전 가이드를 연다. */
+  const openGuide = () => {
+    if (phase === 'calculating' || phase === 'guide') return
+    if (phase === 'result') {
+      setStandaloneGuide(false)
+    } else {
+      // 스탬프 화면에서 열었다면 스탬프 화면이 돌아오던 곳으로 돌아간다. 가이드 자기 자신으로는 돌아가지 않는다.
+      const from = phase === 'stamps' ? returnPhaseRef.current : phase
+      guideReturnRef.current = from === 'guide' ? 'select' : from
+      setStandaloneGuide(true)
+    }
+    setPhase('guide')
+  }
+
   const showResult = (day: DayOffset = dayOffset, depart: number | null = departMin) => {
     const fallback = day === 'tomorrow' ? TOMORROW_DEFAULT_DEPART_MIN : seoulMinutes(new Date())
     setCheckedAtMin(depart ?? fallback)
@@ -209,24 +228,36 @@ export default function App() {
   }
 
   const showingJudgement = (phase === 'result' || phase === 'guide') && mountain && courseId && sunset && result
-  const skyMood: SkyMood = showingJudgement ? SKY_BY_VERDICT[result.verdict] : 'dusk'
+  const skyMood: SkyMood = showingJudgement && !standaloneGuide ? SKY_BY_VERDICT[result.verdict] : 'dusk'
+
+  /** 결과 화면에서 연 가이드에만 판정 정보를 넘긴다. 헤더 버튼으로 연 가이드는 null(일반 안내) */
+  const guideContext: GuideContext | null =
+    showingJudgement && !standaloneGuide
+      ? {
+          verdict: result.verdict,
+          day: dayOffset,
+          courseId,
+          onRecalcShort: () => changeCourse('short'),
+          onOtherMountain: () => setPhase('select'),
+        }
+      : null
 
   return (
     <>
       <SkyBackdrop mood={skyMood} />
       <div className="mx-auto flex min-h-dvh w-full max-w-sm flex-col px-4 pt-6 pb-10">
-        <header className="mb-8 flex items-center justify-between gap-2">
+        <header className="mb-8 flex flex-wrap items-center justify-between gap-2">
           <span className="inline-block border-4 border-pix-ink bg-pix-paper px-3 py-1 font-pix-display text-pix-caption font-bold shadow-pix-sm">
             펭산이의 하산 대작전
           </span>
-          <button
-            type="button"
-            onClick={openStamps}
-            disabled={phase === 'calculating'}
-            className="min-h-11 cursor-pointer border-4 border-pix-ink bg-pix-sun px-3 font-pix-display text-pix-caption font-bold shadow-pix-sm focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-pix-orange disabled:cursor-not-allowed disabled:bg-pix-paper-shade"
-          >
-            스탬프 {BADGES.filter((badge) => stamps.earned[badge.id]).length}/{BADGES.length}
-          </button>
+          <div className="flex gap-2">
+            <HeaderButton onClick={openGuide} disabled={phase === 'calculating' || phase === 'guide'}>
+              안전 가이드
+            </HeaderButton>
+            <HeaderButton onClick={openStamps} disabled={phase === 'calculating'}>
+              스탬프 {BADGES.filter((badge) => stamps.earned[badge.id]).length}/{BADGES.length}
+            </HeaderButton>
+          </div>
         </header>
 
         <main>
@@ -272,19 +303,15 @@ export default function App() {
               onChangeCourse={changeCourse}
               onTomorrow={recalcTomorrow}
               onOtherMountain={() => setPhase('select')}
-              onGuide={() => setPhase('guide')}
+              onGuide={openGuide}
             />
           )}
 
-          {phase === 'guide' && showingJudgement && (
+          {phase === 'guide' && (standaloneGuide || guideContext) && (
             <GuideScreen
-              verdict={result.verdict}
-              day={dayOffset}
-              courseId={courseId}
+              context={guideContext}
               onReady={() => grant(['ready'])}
-              onRecalcShort={() => changeCourse('short')}
-              onOtherMountain={() => setPhase('select')}
-              onBackToResult={() => setPhase('result')}
+              onBack={() => setPhase(standaloneGuide ? guideReturnRef.current : 'result')}
             />
           )}
 
