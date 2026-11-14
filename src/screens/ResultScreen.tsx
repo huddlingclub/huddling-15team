@@ -171,6 +171,7 @@ export function ResultScreen({
           sunsetMin={sunsetMin}
           marginMin={result.marginMin}
           verdict={result.verdict}
+          mood={copy.mood}
           className="animate-pix-rise"
           style={reveal(1)}
         />

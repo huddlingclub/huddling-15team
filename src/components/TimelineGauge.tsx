@@ -1,8 +1,10 @@
 import type { CSSProperties } from 'react'
 import { GAUGE_FULL_MARGIN_MIN, type Verdict } from '../config.ts'
+import type { PenguinMood } from '../content.ts'
 import { marginPercent } from '../lib/judge.ts'
 import { formatClock } from '../lib/time.ts'
 import lavenderSkin from '../assets/sprites/ui-skin-lavender.png'
+import { Penguin } from './Penguin.tsx'
 
 /** 판정별 채움 색과 위쪽 하이라이트(피그마 S2-A/B/C · Animated gauge, Pixel bevel) */
 const FILL: Record<Verdict, { body: string; bevel: string }> = {
@@ -30,6 +32,8 @@ interface Props {
   /** 일몰 − 예상 하산(분). 음수면 일몰 뒤에 하산 */
   marginMin: number
   verdict: Verdict
+  /** 막대 위를 걷는 펭귄의 표정 */
+  mood: PenguinMood
   className?: string
   style?: CSSProperties
 }
@@ -38,7 +42,7 @@ interface Props {
  * 일몰까지 남은 시간 (피그마 디자인 시스템 · Timeline).
  * 막대는 "하산 후 일몰까지 남는 여유"를 나타내서, 판정이 나쁠수록 짧아진다.
  */
-export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, className = '', style }: Props) {
+export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, mood, className = '', style }: Props) {
   const percent = marginPercent(marginMin)
   const margin = Math.max(0, Math.round(marginMin))
 
@@ -46,20 +50,34 @@ export function TimelineGauge({ departMin, sunsetMin, marginMin, verdict, classN
     <section style={{ ...SKIN, ...style }} className={`flex flex-col gap-2 p-1 font-pix-ui ${className}`}>
       <h2 className="text-xs leading-[1.35] font-bold text-pix-text-strong">일몰까지 남은 시간</h2>
 
-      <div
-        role="meter"
-        aria-label="하산 후 일몰까지 여유"
-        aria-valuemin={0}
-        aria-valuemax={GAUGE_FULL_MARGIN_MIN}
-        aria-valuenow={Math.min(margin, GAUGE_FULL_MARGIN_MIN)}
-        aria-valuetext={marginMin < 0 ? '일몰 뒤에 하산' : `여유 ${margin}분`}
-        className="relative h-3.5 w-full overflow-hidden rounded-[3px] border-2 border-pix-gauge-border bg-pix-gauge-track"
-      >
-        <div className="absolute inset-0 origin-left animate-pix-grow" style={{ width: `${percent}%` }}>
-          <div className={`absolute inset-0 ${FILL[verdict].body}`} />
-          <div className={`absolute inset-x-0 top-0 h-[3px] ${FILL[verdict].bevel}`} />
+      <div className="relative pt-12">
+        {/* 펭귄은 막대가 차오르는 속도에 맞춰 왼쪽에서 채움 끝까지 걷는다. 카드 밖으로 나가지 않게 양끝 28px 안쪽에 세운다.
+            모션을 줄이는 설정에서도 도착 지점에 서 있도록 left를 직접 지정한다. */}
+        <div
+          aria-hidden="true"
+          className="absolute top-0 animate-pix-walk"
+          style={{ left: `clamp(28px, ${percent}%, calc(100% - 28px))` }}
+        >
+          <div className="-translate-x-1/2">
+            <Penguin mood={mood} size="xs" />
+          </div>
         </div>
-        <div aria-hidden="true" className="absolute inset-0" style={TICKS} />
+
+        <div
+          role="meter"
+          aria-label="하산 후 일몰까지 여유"
+          aria-valuemin={0}
+          aria-valuemax={GAUGE_FULL_MARGIN_MIN}
+          aria-valuenow={Math.min(margin, GAUGE_FULL_MARGIN_MIN)}
+          aria-valuetext={marginMin < 0 ? '일몰 뒤에 하산' : `여유 ${margin}분`}
+          className="relative h-3.5 w-full overflow-hidden rounded-[3px] border-2 border-pix-gauge-border bg-pix-gauge-track"
+        >
+          <div className="absolute inset-0 origin-left animate-pix-grow" style={{ width: `${percent}%` }}>
+            <div className={`absolute inset-0 ${FILL[verdict].body}`} />
+            <div className={`absolute inset-x-0 top-0 h-[3px] ${FILL[verdict].bevel}`} />
+          </div>
+          <div aria-hidden="true" className="absolute inset-0" style={TICKS} />
+        </div>
       </div>
 
       <div className="flex items-start justify-between text-[10px] leading-[1.35]">
