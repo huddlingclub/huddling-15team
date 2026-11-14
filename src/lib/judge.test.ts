@@ -167,8 +167,8 @@ test('시각·시간 표시', () => {
 })
 
 test('내일 판정이 빨강이면 "오늘" 대신 "내일" 문구를 쓴다', () => {
-  assert.equal(verdictCopy('red', 'today').badge, '오늘은 비추천!')
-  assert.equal(verdictCopy('red', 'tomorrow').badge, '내일은 비추천!')
+  assert.equal(verdictCopy('red', 'today').badge, '이 시간 비추천!')
+  assert.equal(verdictCopy('red', 'tomorrow').badge, '이 시간 비추천!')
   assert.ok(!verdictCopy('red', 'tomorrow').bubble.includes('오늘'))
   assert.ok(!verdictCopy('red', 'tomorrow').guide.includes('오늘'))
   assert.equal(verdictCopy('green', 'tomorrow').badge, '도전 가능!')

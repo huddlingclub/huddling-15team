@@ -32,7 +32,7 @@ export const VERDICT_COPY: Record<Verdict, VerdictCopy> = {
     guide: '정상까지 가지 말고 중간에서 내려오는 걸 추천해요. 정해둔 하산 시각을 넘기지 않는 게 가장 중요해요.',
   },
   red: {
-    badge: '오늘은 비추천!',
+    badge: '이 시간 비추천!',
     bubble: '오늘은 쉬고 다음에 도전하자!',
     scene: '해가 진 뒤 산길은 위험해. 다음 기회를 준비하자!',
     mood: 'sad',
@@ -41,8 +41,7 @@ export const VERDICT_COPY: Record<Verdict, VerdictCopy> = {
 }
 
 /** 내일 판정에서 빨강이면 "오늘"이 들어간 문구 대신 쓴다. */
-const RED_TOMORROW_COPY: Pick<VerdictCopy, 'badge' | 'bubble' | 'guide'> = {
-  badge: '내일은 비추천!',
+const RED_TOMORROW_COPY: Pick<VerdictCopy, 'bubble' | 'guide'> = {
   bubble: '내일 이 시각은 무리야! 더 일찍 출발하자!',
   guide: '내일 이 시각에 출발하면 해가 지기 전에 내려오기 어려워요. 입산 시각을 앞당기거나 더 짧은 코스를 골라요.',
 }
