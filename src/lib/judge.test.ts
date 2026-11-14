@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { judgeDescent, verdictFromMargin } from './judge.ts'
+import { judgeDescent, marginPercent, verdictFromMargin } from './judge.ts'
 import { EMPTY_STAMPS, grantBadge, parseStamps, recordMountain } from './badges.ts'
 import { buildShareText } from './share.ts'
 import { verdictCopy } from '../content.ts'
@@ -173,4 +173,22 @@ test('내일 판정이 빨강이면 "오늘" 대신 "내일" 문구를 쓴다', 
   assert.ok(!verdictCopy('red', 'tomorrow').guide.includes('오늘'))
   assert.equal(verdictCopy('green', 'tomorrow').badge, '도전 가능!')
   assert.equal(verdictCopy('yellow', 'tomorrow').badge, '주의 필요!')
+})
+
+test('여유가 줄수록 게이지가 짧아진다', () => {
+  assert.equal(marginPercent(150), 100)
+  assert.equal(marginPercent(120), 100)
+  assert.equal(marginPercent(60), 50)
+  // 초록(60분 이상) > 노랑(20~59분) > 빨강(20분 미만)
+  assert.ok(marginPercent(82) > marginPercent(40))
+  assert.ok(marginPercent(40) > marginPercent(14))
+})
+
+test('빨간불이어도 여유가 있으면 게이지 한 칸은 보인다', () => {
+  assert.equal(marginPercent(1), 100 / 12)
+  assert.equal(marginPercent(10), 100 / 12)
+  assert.ok(marginPercent(19) > 100 / 12)
+  // 일몰 뒤 하산(여유 0분 이하)이면 비운다
+  assert.equal(marginPercent(0), 0)
+  assert.equal(marginPercent(-30), 0)
 })

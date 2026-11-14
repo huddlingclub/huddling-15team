@@ -12,6 +12,9 @@ export interface Thresholds {
 /** 판정 기준. 팀에서 숫자를 바꾸면 이 한 곳만 고치면 된다. */
 export const JUDGE_THRESHOLDS: Thresholds = { greenMin: 60, yellowMin: 20 }
 
+/** '일몰까지 남은 시간' 막대가 가득 차는 여유 시간(분). 초록 기준의 2배라 초록은 절반 이상 채워진다. */
+export const GAUGE_FULL_MARGIN_MIN = JUDGE_THRESHOLDS.greenMin * 2
+
 /** 예상 하산 시각에 더하는 휴식 시간(분). 정상에서 쉬는 시간을 감안한다. */
 export const REST_MIN = 20
 

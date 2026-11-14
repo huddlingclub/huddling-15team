@@ -166,17 +166,15 @@ export function ResultScreen({
           </p>
         </PixelCard>
 
-        <PixelCard tag="일몰까지 남은 시간" className="animate-pix-rise" style={reveal(1)}>
-          <div className="mt-2">
-            <TimelineGauge
-              nowMin={nowMin}
-              finishMin={result.finishMin}
-              sunsetMin={sunsetMin}
-              verdict={result.verdict}
-              mood={copy.mood}
-            />
-          </div>
-        </PixelCard>
+        <TimelineGauge
+          departMin={nowMin}
+          sunsetMin={sunsetMin}
+          marginMin={result.marginMin}
+          verdict={result.verdict}
+          mood={copy.mood}
+          className="animate-pix-rise"
+          style={reveal(1)}
+        />
 
         <PixelCard tag={`${mountain.name} · 코스 바꾸기`} className="animate-pix-rise" style={reveal(2)}>
           <fieldset className="mt-2">
